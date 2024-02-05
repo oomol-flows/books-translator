@@ -11,11 +11,14 @@ def main(props, context):
     source_language_code=context.options["source"],
     target_language_code=context.options["target"],
     max_paragraph_characters=context.options.get("max_paragraph_characters", 800),
+    clean_format=context.options["clean_format"],
   )
-  if not "title" in context.options:
+  if "title" in context.options:
     title = context.options["title"]
-    title = translater.translate(title)
-    book.set_title(title)
+  else:
+    title = translater.translate(book.title)
+
+  book.set_title(title)
 
   for item in book.get_items():
     if item.get_type() == ITEM_DOCUMENT:
