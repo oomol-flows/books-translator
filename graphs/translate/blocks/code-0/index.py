@@ -12,7 +12,7 @@ def main(props, context):
     target_language_code=context.options["target"],
     max_paragraph_characters=context.options.get("max_paragraph_characters", 800),
   )
-  if "title" in context.options:
+  if not "title" in context.options:
     title = context.options["title"]
     title = translater.translate(title)
     book.set_title(title)

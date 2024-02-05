@@ -7,10 +7,11 @@ nodes:
       x: 39
       'y': 39
     options:
-      file: /oomol-storage/books/A History of Greek Mathematics Volume 1.epub
+      file: /oomol-storage/books/The Forgotten Revolution.epub
       source: en
       target: zh-CN
       max_paragraph_characters: 835
+      title: 遗忘的革命
     block: ./blocks/code-0/code-0.oo.yaml
   lib-0:
     id: lib-0

@@ -25,7 +25,7 @@ class Translator:
     response = self.client.translate_text(
       request={
         "parent": parent,
-        "contents": contents,
+        "contents": [text],
         "mime_type": "text/plain",
         "source_language_code": self.source_language_code,
         "target_language_code": self.target_language_code,
@@ -63,22 +63,21 @@ class Translator:
     for index, source_text_list in enumerate(source_text_groups):
       source_text_list = self._standardize_paragraph_list(source_text_list)
       target_text_list = self._translate_html(source_text_list)
-    
-      if len(target_text_list) > 0:
 
-        if index > 0:
-          source_text_list.pop(0)
-          target_text_list.pop(0)
+      if index > 0:
+        source_text_list.pop(0)
+        target_text_list.pop(0)
 
-        if index < len(source_text_groups):
-          source_text_list.pop()
-          target_text_list.pop()
+      # 长度为 2 的数组来源于裁剪，不得已，此时它的后继的首位不会与它重复，故不必裁剪
+      if index < len(source_text_groups) and len(source_text_list) > 2:
+        source_text_list.pop()
+        target_text_list.pop()
 
-        for source, target in zip(source_text_list, target_text_list):
-          source_dom = etree.fromstring(source, parser=parser)
-          target_dom = etree.fromstring(target, parser=parser)
-          body_dom.append(source_dom)
-          body_dom.append(target_dom)
+      for source, target in zip(source_text_list, target_text_list):
+        source_dom = etree.fromstring(source, parser=parser)
+        target_dom = etree.fromstring(target, parser=parser)
+        body_dom.append(source_dom)
+        body_dom.append(target_dom)
 
     return etree.tostring(root, method="html", encoding="utf-8").decode("utf-8")
 
