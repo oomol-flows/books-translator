@@ -1,0 +1,34 @@
+name: translate
+nodes:
+  code-0:
+    id: code-0
+    title: Translate
+    pos:
+      x: 39
+      'y': 39
+    options:
+      file: /oomol-storage/books/A History of Greek Mathematics Volume 1.epub
+      source: en
+      target: zh-CN
+      max_paragraph_characters: 835
+    block: ./blocks/code-0/code-0.oo.yaml
+  lib-0:
+    id: lib-0
+    title: Write
+    pos:
+      x: 299
+      'y': 39
+    options:
+      file_name: target.epub
+      output_folder: /oomol-storage/books
+      when_file_exists: rename
+    block: common/file_writer/block.oo.yaml
+edges:
+  edge-0:
+    id: edge-0
+    from:
+      node_id: code-0
+      key: bin
+    to:
+      node_id: lib-0
+      key: binary

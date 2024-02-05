@@ -1,0 +1,54 @@
+# check https://oomol.com/docs/reference/block for block schema
+# check https://oomol.com/docs/reference/builtin-widget for widget schema
+props: {}
+options:
+  file:
+    optional: false
+    schema:
+      type: string
+      "ui:widget": file
+
+  title:
+    optional: true
+    schema:
+      type: string
+
+  max_paragraph_characters:
+    optional: true
+    schema:
+      type: integer
+      minimum: 1
+      maximum: 5000
+
+  source:
+    optional: false
+    schema:
+      type: string
+      "ui:widget": select
+      "ui:options":
+        metaOptions:
+          - label: English
+            value: en
+          - label: 中文
+            value: zh-CN
+  target:
+    optional: false
+    schema:
+      type: string
+      "ui:widget": select
+      "ui:options":
+        metaOptions:
+          - label: English
+            value: en
+          - label: 中文
+            value: zh-CN
+results:
+  bin:
+    optional: true
+    schema:
+      type: string
+entry:
+  bin: vocana-executor-python
+  envs: {}
+  args:
+    - ./index.py

@@ -1,0 +1,7 @@
+name: code-0
+version: 0.0.1
+namespace: translate
+block: ./code-0.oo.yaml
+preview:
+  out:
+    path: ./ui/dist/index.mjs
