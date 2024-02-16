@@ -1,3 +1,2 @@
-EbookLib==0.18
 lxml==5.1.0
 google-cloud-translate==3.15.0
