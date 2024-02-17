@@ -66,9 +66,6 @@ class Translator:
     source_dom_text_list: list[str] = []
     p_doms = list(xml.root.xpath('//p'))
 
-    __debug_duplicated_texts_set = set()
-    __debug_found_duplicated_set = set()
-
     for p_dom in p_doms:
       bin_text = etree.tostring(p_dom, method="html", encoding="utf-8")
       source_dom_text_list.append(bin_text.decode("utf-8"))
@@ -94,18 +91,14 @@ class Translator:
         else:
           to_target_text_pair_map[index] = [pair]
 
-        if target_text != "":
-          if target_text in __debug_duplicated_texts_set:
-              __debug_found_duplicated_set.add(target_text)
-          __debug_duplicated_texts_set.add(target_text)
-
     for index, p_dom in enumerate(p_doms):
       if index in to_target_text_pair_map:
         new_p_doms = []
         for pair in to_target_text_pair_map[index]:
           for text in pair:
             if text != "":
-              new_p_dom = create_node(f"<p>{text}</p>", parser=self.parser)
+              new_p_text = self._wrap_with_p(p_dom, text)
+              new_p_dom = create_node(new_p_text, parser=self.parser)
               new_p_doms.append(new_p_dom)
     
         parent_dom = p_dom.getparent()
@@ -114,19 +107,6 @@ class Translator:
         for new_p_dom in reversed(new_p_doms):
           parent_dom.insert(index_at_parent, new_p_dom)
         parent_dom.remove(p_dom)
-
-    if len(__debug_found_duplicated_set) > 0:
-      file_name = os.path.basename(file_path)
-      log_path = f"/app/workspace/source/{file_name}.json"
-      json_str = json.dumps(
-        {
-          "duplicated": list(__debug_found_duplicated_set),
-          "source": source_text_list,
-        }, 
-        indent=4,
-      )
-      with open(log_path, "w") as file:
-          file.write(json_str)
 
     return xml.encode()
 
@@ -168,15 +148,20 @@ class Translator:
     for index, text in enumerate(source_text_list):
       if self._is_not_empty(text):
         text = f"<p>{text}</p>"
-        check_again = False
+        dom = create_node(text, parser=self.parser)
 
         if self.clean_format:
-          dom = create_node(text, parser=self.parser)
-          text = etree.tostring(dom, method="text", encoding="utf-8", pretty_print=False)
-          text = text.decode("utf-8")
-          check_again = True
+          unformat_text = self._unformat(dom)
+          text = unformat_text
+        else:
+          # 一些英语书籍会用 span 进行缩进排版，这些会影响翻译，应该删除
+          changed = self._try_to_clean_space(dom)
+          if changed:
+            bin_text = etree.tostring(dom, method="html", encoding="utf-8")
+            text = bin_text.decode("utf-8")
+          unformat_text = self._unformat(dom)
 
-        if not check_again or self._is_not_empty(text):
+        if self._is_not_empty(unformat_text):
           to_translated_text_list.append(text)
           index_list.append(index)
     
@@ -190,15 +175,6 @@ class Translator:
       target_text_list[index] = text
 
     return target_text_list
-
-  def _is_not_empty(self, text: str) -> bool:
-    return not re.match(r"^[\s\n]*$", text)
-
-  def _clean_p_tag(self, text: str) -> str:
-    text = re.sub(r"^[\s\n]*<p[^>]*>", "", text)
-    text = re.sub(r"</\s*p>[\s\n]*$", "", text)
-    text = re.sub(r"[\s\n]+", " ", text)
-    return text
 
   def _translate_by_google(self, source_text_list, mime_type) -> list[str]:
     indexes = []
@@ -236,3 +212,45 @@ class Translator:
         target_text_list[index] = translation.translated_text
     
     return target_text_list
+
+  def _try_to_clean_space(self, dom):
+    span_list = []
+    changed = False
+    for dom in dom.xpath(".//span"):
+      span_list.append(dom)
+    for dom in span_list:
+      text_bin = etree.tostring(dom, method="text", encoding="utf-8", pretty_print=False)
+      if self._is_not_empty(text_bin.decode("utf-8")):
+        continue
+      tail = dom.tail
+      if tail is None:
+        tail = " "
+      else:
+        tail = f" {tail}"
+      dom.tail = tail
+      dom.getparent().remove(dom)
+      changed = True
+    return changed
+
+  def _unformat(self, dom):
+    return etree.tostring(dom, method="text", encoding="utf-8", pretty_print=False).decode("utf-8")
+
+  def _is_not_empty(self, text: str) -> bool:
+    return not re.match(r"^[\s\n]*$", text)
+
+  def _wrap_with_p(self, p_dom, text: str) -> str:
+    attributes_list = []
+    for key, value in p_dom.attrib.items():
+      json_value = json.dumps(value)
+      attributes_list.append(f"{key}={json_value}")
+    if len(attributes_list) > 1:
+      attributes = " ".join(attributes_list)
+      return f"<p {attributes}>{text}</p>"
+    else:
+      return f"<p>{text}</p>"
+
+  def _clean_p_tag(self, text: str) -> str:
+    text = re.sub(r"^[\s\n]*<p[^>]*>", "", text)
+    text = re.sub(r"</\s*p>[\s\n]*$", "", text)
+    text = re.sub(r"[\s\n]+", " ", text)
+    return text
