@@ -51,15 +51,19 @@ class Translator:
     self.project_id = project_id
     self.source_language_code = source_language_code
     self.target_language_code = target_language_code
-    self.max_paragraph_characters = max_paragraph_characters
     self.clean_format = clean_format
+    self.group = ParagraphsGroup(
+      max_paragraph_len=max_paragraph_characters,
+      # https://support.google.com/translate/thread/18674882/how-many-words-is-maximum-in-google?hl=en
+      max_group_len=5000,
+    )
 
-  def translate(self, text):
-    translated_text_list = self._translate_by_google([text], "text/plain")
-    if len(translated_text_list) > 0:
-      return translated_text_list[0]
-    else:
-      return text
+  def translate(self, text_list: list[str]):
+    to_text_list: list[str] = []
+    for text_list in self.group.split_text_list(text_list):
+      for text in self._translate_by_google(text_list, "text/plain"):
+        to_text_list.append(text)
+    return to_text_list
 
   def translate_page(self, file_path: str, page_content: str):
     xml = _XML(page_content, self.parser)
@@ -111,13 +115,8 @@ class Translator:
     return xml.encode()
 
   def _translate_group_by_group(self, file_path: str, source_text_list: list[str]):
-    group = ParagraphsGroup(
-      max_paragraph_len=self.max_paragraph_characters,
-      # https://support.google.com/translate/thread/18674882/how-many-words-is-maximum-in-google?hl=en
-      max_group_len=5000,
-    )
     target_list = []
-    paragraph_group_list = group.split(source_text_list)
+    paragraph_group_list = self.group.split_paragraphs(source_text_list)
 
     for index, paragraph_list in enumerate(paragraph_group_list):
       source_text_list = list(map(lambda x: self._clean_p_tag(x.text), paragraph_list))

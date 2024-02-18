@@ -6,6 +6,7 @@ import tempfile
 import base64
 import shutil
 
+from lxml import etree
 from logic import Translator, EpubContent
 
 def main(props, context):
@@ -29,7 +30,7 @@ def main(props, context):
           with zip_ref.open(member) as source, open(target_path, "wb") as file:
               file.write(source.read())
 
-    _translate_folder(unzip_path, translator)
+    _translate_folder(context, unzip_path, translator)
     in_memory_zip = io.BytesIO()
 
     with zipfile.ZipFile(in_memory_zip, "w") as zip_file:
@@ -47,9 +48,53 @@ def main(props, context):
   finally:
     shutil.rmtree(unzip_path)
 
-def _translate_folder(path: str, translator):
-  content = EpubContent(os.path.join(path, "content.opf"))
-  for spine in content.spines:
+def _translate_folder(context, path: str, translator):
+  epub_content = EpubContent(path)
+
+  if "title" in context.options:
+    book_title = context.options["title"]
+  else:
+    book_title = epub_content.title
+    if not book_title is None:
+      book_title = _link_translated(book_title, translator.translate([book_title])[0])
+
+  if not book_title is None:
+    epub_content.title = book_title
+
+  authors = epub_content.authors
+  to_authors = translator.translate(authors)
+
+  for i, author in enumerate(authors):
+    authors[i] = _link_translated(author, to_authors[i])
+
+  epub_content.authors = authors
+  epub_content.save()
+
+  _transalte_ncx(epub_content, translator)
+  _translate_spines(epub_content, path, translator)
+
+def _transalte_ncx(epub_content: EpubContent, translator):
+  ncx_path = epub_content.ncx_path
+
+  if ncx_path is not None:
+    tree = etree.parse(ncx_path)
+    root = tree.getroot()
+    namespaces={ "ns": root.nsmap.get(None) }
+    text_doms = []
+    text_list = []
+
+    for text_dom in root.xpath("//ns:text", namespaces=namespaces):
+      text_doms.append(text_dom)
+      text_list.append(text_dom.text)
+    
+    for index, text in enumerate(translator.translate(text_list)):
+      text_dom = text_doms[index]
+      text_dom.text = _link_translated(text_dom.text, text)
+
+    tree.write(ncx_path, pretty_print=True)
+
+def _translate_spines(epub_content: EpubContent, path: str, translator):
+  for spine in epub_content.spines:
     if spine.media_type == "application/xhtml+xml":
       file_path = os.path.abspath(os.path.join(path, spine.href))
       with open(file_path, "r", encoding="utf-8") as file:
@@ -58,65 +103,8 @@ def _translate_folder(path: str, translator):
       with open(file_path, "w", encoding="utf-8") as file:
         file.write(content)
 
-  # set metadata
-  # book.set_identifier("id123456")
-  # book.set_title("Sample book")
-  # book.set_language("en")
-
-  # book.add_author("Author Authorowski")
-  # book.add_author(
-  #     "Danko Bananko",
-  #     file_as="Gospodin Danko Bananko",
-  #     role="ill",
-  #     uid="coauthor",
-  # )
-  # add default NCX and Nav file
-  # book.add_item(epub.EpubNcx())
-  # book.add_item(epub.EpubNav())
-
-  # define CSS style
-  # style = "BODY {color: white;}"
-  # nav_css = epub.EpubItem(
-  #     uid="style_nav",
-  #     file_name="style/nav.css",
-  #     media_type="text/css",
-  #     content=style,
-  # )
-  # # add CSS file
-  # book.add_item(nav_css)
-
-  # book.toc = origin_book.toc
-  # book.spine = origin_book.spine
-
-  # for item in origin_book.items:
-  #   if item.get_type() == ITEM_DOCUMENT:
-  #     content = item.get_content().decode("utf-8")
-  #     print(">>>", item.file_name)
-  #     if "titlepage.xhtml" == item.file_name:
-  #       print(content)
-  #   book.add_item(item)
-
-  # define Table Of Contents
-  # book.toc = (
-  #     epub.Link("chap_01.xhtml", "Introduction", "intro"),
-  #     (epub.Section("Simple book"), (first_chapter,)),
-  # )
-
-
-  # first_chapter = None
-
-  # for item in _get_items(translator, origin_book):
-  #   if item.get_type() == ITEM_DOCUMENT:
-  #     first_chapter = item
-  #   book.add_item(item)
-
-  # basic spine
-  # book.spine = ["nav", first_chapter]
-
-  # if "title" in context.options:
-  #   new_book.set_title(context.options["title"])
-  # else:
-  #   new_book.set_title(translator.translate(book.title))
-
-  # for author in book.get_metadata("DC", "creator"):
-  #   new_book.add_author(author)
+def _link_translated(origin: str, target: str) -> str:
+  if origin == target:
+    return origin
+  else:
+    return f"{origin} - {target}"

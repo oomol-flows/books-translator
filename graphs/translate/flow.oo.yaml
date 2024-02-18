@@ -11,7 +11,7 @@ nodes:
       source: en
       target: zh-CN
       max_paragraph_characters: 835
-      clean_format: false
+      clean_format: true
     block: ./blocks/code-0/code-0.oo.yaml
   lib-0:
     id: lib-0
