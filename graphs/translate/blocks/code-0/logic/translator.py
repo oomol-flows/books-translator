@@ -2,10 +2,16 @@ import re
 import os
 import json
 
+from enum import Enum
 from lxml import etree
-from google.cloud import translate
+
 from .group import ParagraphsGroup
+from .adapter import GoogleTranslator, OpenAITranslator
 from .utils import create_node, escape_ascii
+
+class Adapter(Enum):
+    Google = 1
+    OpenAI = 2
 
 class _XML:
   def __init__(self, page_content: str, parser: etree.HTMLParser):
@@ -36,7 +42,6 @@ class _XML:
 
     return text
 
-# https://cloud.google.com/translate/docs/advanced/translate-text-advance?hl=zh-cn
 class Translator:
   def __init__(
     self, 
@@ -45,23 +50,29 @@ class Translator:
     target_language_code: str,
     max_paragraph_characters: int,
     clean_format: bool,
+    adapter: Adapter,
   ):
-    self.client = translate.TranslationServiceClient()
     self.parser = etree.HTMLParser(recover=True)
-    self.project_id = project_id
-    self.source_language_code = source_language_code
-    self.target_language_code = target_language_code
     self.clean_format = clean_format
     self.group = ParagraphsGroup(
       max_paragraph_len=max_paragraph_characters,
       # https://support.google.com/translate/thread/18674882/how-many-words-is-maximum-in-google?hl=en
       max_group_len=5000,
     )
+    if adapter == Adapter.Google:
+      self._translator = GoogleTranslator(
+        project_id=project_id,
+        source_language_code=source_language_code,
+        target_language_code=target_language_code,
+      )
+    elif adapter == Adapter.OpenAI:
+      self.clean_format = True
+      self._translator = OpenAITranslator()
 
   def translate(self, text_list: list[str]):
     to_text_list: list[str] = []
     for text_list in self.group.split_text_list(text_list):
-      for text in self._translate_by_google(text_list, "text/plain"):
+      for text in self._emit_translation_task(text_list, "text/plain"):
         to_text_list.append(text)
     return to_text_list
 
@@ -169,13 +180,13 @@ class Translator:
     else:
       mime_type = "text/html"
 
-    for i, text in enumerate(self._translate_by_google(to_translated_text_list, mime_type)):
+    for i, text in enumerate(self._emit_translation_task(to_translated_text_list, mime_type)):
       index = index_list[i]
       target_text_list[index] = text
 
     return target_text_list
 
-  def _translate_by_google(self, source_text_list, mime_type) -> list[str]:
+  def _emit_translation_task(self, source_text_list, mime_type) -> list[str]:
     indexes = []
     contents = []
 
@@ -187,29 +198,17 @@ class Translator:
     target_text_list = [""] * len(source_text_list)
 
     if len(contents) > 0:
-      location = "global"
-      parent = f"projects/{self.project_id}/locations/{location}"
-
       try:
-        response = self.client.translate_text(
-          request={
-            "parent": parent,
-            "contents": contents,
-            "mime_type": mime_type,
-            "source_language_code": self.source_language_code,
-            "target_language_code": self.target_language_code,
-          }
-        )
+        for i, text in enumerate(self._translator.translate(contents, mime_type)):
+          index = indexes[i]
+          target_text_list[index] = text
+
       except Exception as e:
         print("translate contents failed:")
         for content in contents:
           print(content)
         raise e
 
-      for i, translation in enumerate(response.translations):
-        index = indexes[i]
-        target_text_list[index] = translation.translated_text
-    
     return target_text_list
 
   def _try_to_clean_space(self, dom):

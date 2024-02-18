@@ -7,15 +7,23 @@ import base64
 import shutil
 
 from lxml import etree
-from logic import Translator, EpubContent
+from logic import Adapter, Translator, EpubContent
 
 def main(props, context):
+  if context.options["adapter"] == "google":
+    adapter=Adapter.Google
+  elif context.options["adapter"] == "open_ai":
+    adapter=Adapter.OpenAI
+  else:
+    raise Exception("invalid adapter")
+
   translator = Translator(
     project_id="balmy-mile-348403",
     source_language_code=context.options["source"],
     target_language_code=context.options["target"],
     max_paragraph_characters=context.options.get("max_paragraph_characters", 800),
     clean_format=context.options["clean_format"],
+    adapter=adapter,
   )
   file_path = context.options["file"]
   unzip_path = tempfile.mkdtemp()
