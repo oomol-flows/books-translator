@@ -7,12 +7,12 @@ nodes:
       x: 39
       'y': 39
     options:
-      file: /oomol-storage/books/How.epub
+      file: /oomol-storage/books/Forgotten.epub
       source: en
       target: zh-CN
       max_paragraph_characters: 835
       clean_format: true
-      adapter: google
+      adapter: open_ai
     block: ./blocks/code-0/code-0.oo.yaml
   lib-0:
     id: lib-0

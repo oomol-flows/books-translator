@@ -80,16 +80,16 @@ class ParagraphsGroup:
       if len(cell) + buffer_len <= self.max_paragraph_len:
         buffer.write(cell)
         buffer_len += len(cell)
-      elif buffer_len > 0:
-        buffer.flush()
-        splited_paragraph_list.append(Paragraph(
-          text=buffer.getvalue(), 
-          index=index,
-        ))
-        buffer.close()
-        buffer = io.StringIO()
-        buffer_len = 0
-      else:
+      else: 
+        if buffer_len > 0:
+          buffer.flush()
+          splited_paragraph_list.append(Paragraph(
+            text=buffer.getvalue(), 
+            index=index,
+          ))
+          buffer.close()
+          buffer = io.StringIO()
+          buffer_len = 0
         while len(cell) > self.max_group_len:
           splited_paragraph_list.append(Paragraph(
             text=cell[:self.max_group_len], 
@@ -97,7 +97,7 @@ class ParagraphsGroup:
           ))
           cell = cell[self.max_group_len:]
         if len(cell) > 0:
-          splited_paragraph_list.append(Paragraph(cell, index))
+          buffer.write(cell)
 
     if buffer_len > 0:
         buffer.flush()
