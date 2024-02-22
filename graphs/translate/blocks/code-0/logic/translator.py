@@ -35,9 +35,9 @@ class _XML:
     text = etree.tostring(self.root, method="html", encoding="utf-8")
     text = text.decode("utf-8")
 
-    # TODO: 替换成更完善的自闭检测
-    # link 可能生成非自闭 tag，对 epub 是非法，此处用正则替换掉非自闭型
-    text = re.sub(r"<((link|meta)[^>]*?)(?<!/)>", r"<\1/>", text)
+    # HTML 规定了一系列自闭标签，这些标签需要改成非自闭的，因为 EPub 格式不支持
+    # https://www.tutorialspoint.com/which-html-tags-are-self-closing
+    text = re.sub(r"<((img|br|hr|input|col|base|meta|link|area)[^>]*?)(?<!/)>", r"<\1/>", text)
     text = self.head + text
 
     return text
