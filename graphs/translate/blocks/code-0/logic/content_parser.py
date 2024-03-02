@@ -4,9 +4,23 @@ from lxml.etree import QName
 from .utils import escape_ascii
 
 class Spine:
-  def __init__(self, item):
+  def __init__(self, folder_path, base_path, item):
+    self._folder_path = folder_path
+    self._base_path = base_path
     self.href = item.get("href")
     self.media_type = item.get("media-type")
+
+  @property
+  def path(self):
+    path = os.path.join(self._base_path, self.href)
+    path = os.path.abspath(path)
+
+    if os.path.exists(path):
+      return path
+
+    path = os.path.join(self._folder_path, self.href)
+    path = os.path.abspath(path)
+    return path
 
 class EpubContent:
   def __init__(self, path: str):
@@ -36,9 +50,17 @@ class EpubContent:
   def ncx_path(self):
     ncx_dom = self._manifest.find(".//*[@id=\"ncx\"]")
     if not ncx_dom is None:
-      path = ncx_dom.get("href")
+      href_path = ncx_dom.get("href")
+      base_path = os.path.dirname(self._content_path)
+      path = os.path.join(base_path, href_path)
+      path = os.path.abspath(path)
+
+      if os.path.exists(path):
+        return path
+      
       path = os.path.join(self.folder_path, path)
-      return os.path.abspath(path)
+      path = os.path.abspath(path)
+      return path
 
   @property
   def spines(self):
@@ -58,10 +80,16 @@ class EpubContent:
       if id in idref_dict:
         index = idref_dict[id]
         items[index] = child
+
+    base_path = os.path.dirname(self._content_path)
     
     for item in items:
       if item is not None:
-        spines.append(Spine(item))
+        spines.append(Spine(
+          folder_path=self.folder_path,
+          base_path=base_path,
+          item=item,
+        ))
 
     return spines
 

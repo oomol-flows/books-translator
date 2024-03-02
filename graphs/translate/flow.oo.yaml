@@ -7,12 +7,12 @@ nodes:
       x: 39
       'y': 39
     options:
-      file: /oomol-storage/books/Forgotten.epub
+      file: /oomol-storage/books/Encyclopedia of Renaissance Philosophy.epub
       source: en
       target: zh-CN
       max_paragraph_characters: 835
-      clean_format: true
-      adapter: open_ai
+      clean_format: false
+      adapter: google
     block: ./blocks/code-0/code-0.oo.yaml
   lib-0:
     id: lib-0

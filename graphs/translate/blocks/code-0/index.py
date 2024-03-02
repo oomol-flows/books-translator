@@ -104,7 +104,7 @@ def _transalte_ncx(epub_content: EpubContent, translator):
 def _translate_spines(epub_content: EpubContent, path: str, translator):
   for spine in epub_content.spines:
     if spine.media_type == "application/xhtml+xml":
-      file_path = os.path.abspath(os.path.join(path, spine.href))
+      file_path = spine.path
       with open(file_path, "r", encoding="utf-8") as file:
         content = file.read()
         content = translator.translate_page(file_path, content)
