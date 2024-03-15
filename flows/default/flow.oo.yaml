@@ -1,0 +1,91 @@
+nodes:
+  - task: ../../blocks/python_lib_f2bb66/block.oo.yaml
+    node_id: bb666156-5724-47af-8a87-7c0cf2bd1b58
+    inputs_from:
+      [
+        {
+            handle: file,
+            trigger: null,
+            cache: { initial_value: /oomol-storage/books/The Forgotten Revolution.epub },
+            from_flow: null,
+            from_node: null,
+            from_slot: null
+          },
+        {
+            handle: source,
+            trigger: null,
+            cache: { initial_value: en },
+            from_flow: null,
+            from_node: null,
+            from_slot: null
+          },
+        {
+            handle: target,
+            trigger: null,
+            cache: { initial_value: zh-CN },
+            from_flow: null,
+            from_node: null,
+            from_slot: null
+          },
+        {
+            handle: clean_format,
+            trigger: null,
+            cache: { initial_value: true },
+            from_flow: null,
+            from_node: null,
+            from_slot: null
+          },
+        {
+            handle: adapter,
+            trigger: null,
+            cache: { initial_value: google },
+            from_flow: null,
+            from_node: null,
+            from_slot: null
+          },
+        {
+            handle: max_paragraph_characters,
+            trigger: null,
+            cache: true,
+            from_flow: null,
+            from_node: null,
+            from_slot: null
+          }
+      ]
+    title: Translate
+  - task: common::file_writer
+    node_id: 2c32d55e-67d8-420d-b929-f8bd1d6f0f0b
+    inputs_from:
+      - handle: file_name
+        trigger: null
+        cache:
+          initial_value: target.epub
+        from_flow: null
+        from_node: null
+        from_slot: null
+      - handle: output_folder
+        trigger: null
+        cache:
+          initial_value: /oomol-storage/books
+        from_flow: null
+        from_node: null
+        from_slot: null
+      - handle: when_file_exists
+        trigger: null
+        cache:
+          initial_value: rename
+        from_flow: null
+        from_node: null
+        from_slot: null
+      - handle: binary
+        trigger: null
+        cache: true
+        from_flow: null
+        from_node:
+          - node_id: bb666156-5724-47af-8a87-7c0cf2bd1b58
+            output_handle: bin
+          - node_id: bb666156-5724-47af-8a87-7c0cf2bd1b58
+            output_handle: bin
+          - node_id: bb666156-5724-47af-8a87-7c0cf2bd1b58
+            output_handle: bin
+        from_slot: null
