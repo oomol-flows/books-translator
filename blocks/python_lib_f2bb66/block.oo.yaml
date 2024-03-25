@@ -5,42 +5,58 @@ executor:
   entry: ./index.py
 inputs_def:
   - handle: file
-    schema:
-      type: string
-      "ui:widget": file
+    serialize:
+      serializer: json
+      json_schema:
+        type: string
+        "ui:widget": file
   - handle: title
     optional: true
-    schema:
-      type: string
+    serialize:
+      serializer: json
+      json_schema:
+        type: string
   - handle: max_paragraph_characters
     optional: true
-    schema:
-      type: integer
-      minimum: 1
-      maximum: 5000
+    serialize:
+      serializer: json
+      json_schema:
+        type: integer
+        minimum: 1
+        maximum: 5000
   - handle: adapter
-    schema:
-      type: string
-      enum:
-        - google
-        - open_ai
+    serialize:
+      serializer: json
+      json_schema:
+        type: string
+        enum:
+          - google
+          - open_ai
   - handle: clean_format
-    schema:
-      type: boolean
+    serialize:
+      serializer: json
+      json_schema:
+        type: boolean
   - handle: source
-    schema:
-      type: string
-      enum:
-        - en
-        - zh-CN
+    serialize:
+      serializer: json
+      json_schema:
+        type: string
+        enum:
+          - en
+          - zh-CN
   - handle: target
-    schema:
-      type: string
-      enum:
-        - en
-        - zh-CN
+    serialize:
+      serializer: json
+      json_schema:
+        type: string
+        enum:
+          - en
+          - zh-CN
 outputs_def:
   - handle: bin
     optional: true
-    schema:
-      type: string
+    serialize:
+      serializer: json
+      json_schema:
+        type: string

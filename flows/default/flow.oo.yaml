@@ -78,6 +78,10 @@ nodes:
         from_node: null
         from_slot: null
       - handle: binary
+        trigger: null
+        cache: true
+        from_flow: null
         from_node:
           - node_id: bb666156-5724-47af-8a87-7c0cf2bd1b58
             output_handle: bin
+        from_slot: null
