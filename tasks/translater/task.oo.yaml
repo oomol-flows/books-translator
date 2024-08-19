@@ -1,0 +1,55 @@
+inputs_def:
+  - handle: file
+    description: Input
+    json_schema:
+      type: string
+      ui:widget: file
+    value: ""
+  - handle: title
+    json_schema:
+      type: string
+  - handle: max_paragraph_characters
+    json_schema:
+      type: integer
+      minimum: 1
+      maximum: 5000
+    value: 400
+  - handle: adapter
+    json_schema:
+      type: string
+      enum:
+        - DeepSeek
+        - OpenAI
+    value: DeepSeek
+  - handle: clean_format
+    json_schema:
+      type: boolean
+    value: true
+  - handle: source
+    json_schema:
+      type: string
+      enum:
+        - English
+        - 中文
+    value: English
+  - handle: target
+    json_schema:
+      type: string
+      enum:
+        - English
+        - 中文
+    value: 中文
+outputs_def:
+  - handle: bin
+    description: Output
+    json_schema:
+      type: string
+icon: ":logos:python:"
+ui:
+  default_width: 530
+executor:
+  name: python
+  options:
+    spawn: false
+    entry: main.py
+title: 翻译电子书

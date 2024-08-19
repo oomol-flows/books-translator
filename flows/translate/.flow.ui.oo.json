@@ -1,0 +1,21 @@
+{
+  "nodes": [
+    {
+      "id": "translater#1",
+      "contentWidth": 347.45440673828125,
+      "selected": true,
+      "dragging": false,
+      "position": {
+        "x": 302.4166662527455,
+        "y": 170.50130293766654
+      },
+      "positionAbsolute": {
+        "x": 302.4166662527455,
+        "y": 170.50130293766654
+      },
+      "width": 359,
+      "height": 264
+    }
+  ],
+  "edges": []
+}

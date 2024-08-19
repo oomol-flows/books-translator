@@ -1,0 +1,9 @@
+nodes:
+  - task: self::translater
+    title: "翻译电子书 #1"
+    node_id: translater#1
+    inputs_from:
+      - handle: in
+        value: ""
+      - handle: file
+        value: ""
