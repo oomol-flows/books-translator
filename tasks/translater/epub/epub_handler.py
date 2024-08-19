@@ -1,17 +1,11 @@
 import re
-import os
 import json
 
-from enum import Enum
 from lxml import etree
 
+from ..transalter import Translate
 from .group import ParagraphsGroup
-from .adapter import GoogleTranslator, OpenAITranslator
 from .utils import create_node, escape_ascii
-
-class Adapter(Enum):
-    Google = 1
-    OpenAI = 2
 
 class _XML:
   def __init__(self, page_content: str, parser: etree.HTMLParser):
@@ -42,16 +36,14 @@ class _XML:
 
     return text
 
-class Translator:
+class EpubHandler:
   def __init__(
-    self, 
-    project_id: str, 
-    source_language_code: str, 
-    target_language_code: str,
+    self,
+    translate: Translate,
     max_paragraph_characters: int,
     clean_format: bool,
-    adapter: Adapter,
   ):
+    self._translate: Translate = translate
     self.parser = etree.HTMLParser(recover=True)
     self.clean_format = clean_format
     self.group = ParagraphsGroup(
@@ -59,20 +51,11 @@ class Translator:
       # https://support.google.com/translate/thread/18674882/how-many-words-is-maximum-in-google?hl=en
       max_group_len=5000,
     )
-    if adapter == Adapter.Google:
-      self._translator = GoogleTranslator(
-        project_id=project_id,
-        source_language_code=source_language_code,
-        target_language_code=target_language_code,
-      )
-    elif adapter == Adapter.OpenAI:
-      self.clean_format = True
-      self._translator = OpenAITranslator()
 
   def translate(self, text_list: list[str]):
     to_text_list: list[str] = []
     for text_list in self.group.split_text_list(text_list):
-      for text in self._emit_translation_task(text_list, "text/plain"):
+      for text in self._emit_translation_task(text_list):
         to_text_list.append(text)
     return to_text_list
 
@@ -174,19 +157,14 @@ class Translator:
         if self._is_not_empty(unformat_text):
           to_translated_text_list.append(text)
           index_list.append(index)
-    
-    if self.clean_format:
-      mime_type = "text/plain"
-    else:
-      mime_type = "text/html"
 
-    for i, text in enumerate(self._emit_translation_task(to_translated_text_list, mime_type)):
+    for i, text in enumerate(self._emit_translation_task(to_translated_text_list)):
       index = index_list[i]
       target_text_list[index] = text
 
     return target_text_list
 
-  def _emit_translation_task(self, source_text_list, mime_type) -> list[str]:
+  def _emit_translation_task(self, source_text_list) -> list[str]:
     indexes = []
     contents = []
 
@@ -199,7 +177,7 @@ class Translator:
 
     if len(contents) > 0:
       try:
-        for i, text in enumerate(self._translator.translate(contents, mime_type)):
+        for i, text in enumerate(self._translate(contents)):
           index = indexes[i]
           target_text_list[index] = text
 

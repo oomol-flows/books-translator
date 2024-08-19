@@ -3,7 +3,7 @@
     {
       "id": "translater#1",
       "contentWidth": 347.45440673828125,
-      "selected": true,
+      "selected": false,
       "dragging": false,
       "position": {
         "x": 302.4166662527455,
@@ -15,6 +15,22 @@
       },
       "width": 359,
       "height": 264
+    },
+    {
+      "id": "file_writer#1",
+      "contentWidth": 200,
+      "selected": false,
+      "dragging": false,
+      "position": {
+        "x": 733.4166587028243,
+        "y": 170.50130293766654
+      },
+      "positionAbsolute": {
+        "x": 733.4166587028243,
+        "y": 172.16797013415234
+      },
+      "width": 212,
+      "height": 183
     }
   ],
   "edges": []

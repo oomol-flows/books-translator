@@ -1,20 +1,21 @@
-from oocana import Context
+import base64
 
-# "in", "out" is the default node key.
-# Redefine the name and type of the node, change it manually below.
-# Click on the gear(⚙) to configure the input output UI
+from .epub import EpubHandler
+from .transalter import Translate
+from .file import translate_epub_file
 
-def main(inputs: dict, context: Context):
-  # inputs.get("in") -> help you get node input value
+def main(inputs: dict):
+  translate: Translate = lambda x: x
+  epub_handler = EpubHandler(
+    translate=translate,
+    max_paragraph_characters=inputs["max_paragraph_characters"],
+    clean_format=inputs["clean_format"],
+  )
+  zip_data = translate_epub_file(
+    handler=epub_handler,
+    file_path=inputs["file"],
+    book_title=inputs.get("title", None),
+  )
+  base64_str = base64.b64encode(zip_data).decode("utf-8")
 
-  # preview pandas dataframe
-  # context.preview(df)
-
-  # context.preview({
-  #   # type can be "image", "video", "audio", "markdown", "table", "iframe"
-  #   "type": "image",
-  #   # data can be file path, base64, pandas dataframe
-  #   "data": "",
-  # })
-
-  return { "out": inputs }
+  return { "bin": base64_str }

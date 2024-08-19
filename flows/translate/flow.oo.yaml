@@ -6,4 +6,32 @@ nodes:
       - handle: in
         value: ""
       - handle: file
-        value: ""
+        value: "/oomol-storage/books/Finish What You Start (Peter K Hollins).epub"
+      - handle: title
+        value: Finish What You Start
+      - handle: max_paragraph_characters
+        value: 400
+      - handle: adapter
+        value: DeepSeek
+      - handle: clean_format
+        value: true
+      - handle: source
+        value: English
+      - handle: target
+        value: 中文
+  - task: file::file_writer
+    title: "Write File #1"
+    node_id: file_writer#1
+    inputs_from:
+      - handle: create_folder_if_need
+        value: true
+      - handle: when_file_exists
+        value: override
+      - handle: binary
+        from_node:
+          - node_id: translater#1
+            output_handle: bin
+      - handle: file_name
+        value: 翻译书籍.epub
+      - handle: output_folder
+        value: /oomol-storage/books
