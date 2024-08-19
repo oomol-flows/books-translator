@@ -19,6 +19,10 @@ nodes:
         value: English
       - handle: target
         value: 中文
+      - handle: ai
+        value: DeepSeek
+      - handle: ai_token
+        value: Custom,DeepSeek,API_Key
   - task: file::file_writer
     title: "Write File #1"
     node_id: file_writer#1

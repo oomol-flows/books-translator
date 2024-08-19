@@ -14,13 +14,17 @@ inputs_def:
       minimum: 1
       maximum: 5000
     value: 400
-  - handle: adapter
+  - handle: ai
     json_schema:
       type: string
       enum:
         - DeepSeek
         - OpenAI
     value: DeepSeek
+  - handle: ai_token
+    json_schema:
+      contentMediaType: oomol/secret
+      type: string
   - handle: clean_format
     json_schema:
       type: boolean

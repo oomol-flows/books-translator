@@ -14,7 +14,7 @@
         "y": 170.50130293766654
       },
       "width": 359,
-      "height": 264
+      "height": 292
     },
     {
       "id": "file_writer#1",
@@ -22,16 +22,40 @@
       "selected": false,
       "dragging": false,
       "position": {
-        "x": 733.4166587028243,
+        "x": 688.8166587028242,
         "y": 170.50130293766654
       },
       "positionAbsolute": {
-        "x": 733.4166587028243,
-        "y": 172.16797013415234
+        "x": 688.8166587028242,
+        "y": 169.50130293766654
       },
       "width": 212,
       "height": 183
     }
   ],
-  "edges": []
+  "edges": [
+    {
+      "id": "bc3b21b4-f209-4674-aa74-ba867613e2da",
+      "connection": {
+        "from": {
+          "type": "from_node",
+          "source": {
+            "node_id": "translater#1",
+            "output_handle": "bin"
+          }
+        },
+        "to": {
+          "type": "to_node",
+          "target": {
+            "node_id": "file_writer#1",
+            "input_handle": "binary"
+          }
+        }
+      },
+      "gradientColor": [
+        "var(--edge-json)",
+        "var(--edge-json)"
+      ]
+    }
+  ]
 }
