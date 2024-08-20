@@ -50,7 +50,7 @@ outputs_def:
       type: string
 icon: ":logos:python:"
 ui:
-  default_width: 530
+  default_width: 387
 executor:
   name: python
   options:
