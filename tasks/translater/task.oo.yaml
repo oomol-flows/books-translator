@@ -56,4 +56,4 @@ executor:
   options:
     spawn: false
     entry: __init__.py
-title: 翻译电子书
+title: Translate epub book

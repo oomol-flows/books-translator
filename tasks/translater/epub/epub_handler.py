@@ -147,7 +147,7 @@ class EpubHandler:
           unformat_text = self._unformat(dom)
           text = unformat_text
         else:
-          # 一些英语书籍会用 span 进行缩进排版，这些会影响翻译，应该删除
+          # Some English books use <span> for indentation, which will affect translation and should be removed.
           changed = self._try_to_clean_space(dom)
           if changed:
             bin_text = etree.tostring(dom, method="html", encoding="utf-8")

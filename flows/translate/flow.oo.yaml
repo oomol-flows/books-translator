@@ -1,6 +1,6 @@
 nodes:
   - task: self::translater
-    title: "翻译电子书 #1"
+    title: "Transalte epub book"
     node_id: translater#1
     inputs_from:
       - handle: in
@@ -36,6 +36,6 @@ nodes:
           - node_id: translater#1
             output_handle: bin
       - handle: file_name
-        value: 翻译书籍.epub
+        value: target.epub
       - handle: output_folder
         value: /oomol-storage/books

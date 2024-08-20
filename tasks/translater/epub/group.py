@@ -51,7 +51,8 @@ class ParagraphsGroup:
         sum_len = 0
         self_paragraphs_count = 0
 
-        # 确保分组中有首尾 2 段分别与上一组、下一组重复，以让翻译具有一定上下文，增强翻译准确性
+        # make sure the first and last two paragraphs in the group are repeated in the previous and next groups respectively, 
+        # so that the translation has a certain context and enhances the translation accuracy
         if len(current_paragraph_list) <= 2:
           current_paragraph_list = []
         else:
