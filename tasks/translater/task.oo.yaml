@@ -48,7 +48,7 @@ outputs_def:
     description: Output
     json_schema:
       type: string
-icon: ":logos:python:"
+icon: ":fa6-solid:book-open:currentColor:"
 ui:
   default_width: 387
 executor:
