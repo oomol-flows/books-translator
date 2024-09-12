@@ -3,16 +3,12 @@ nodes:
     title: "Transalte epub book"
     node_id: translater#1
     inputs_from:
-      - handle: in
-        value: ""
       - handle: file
         value: "/oomol-storage/books/Finish What You Start (Peter K Hollins).epub"
       - handle: title
         value: Finish What You Start
       - handle: max_paragraph_characters
         value: 400
-      - handle: adapter
-        value: DeepSeek
       - handle: clean_format
         value: true
       - handle: source
