@@ -6,7 +6,7 @@ from lxml.etree import tostring, fromstring, HTMLParser
 from ..transalter import Translate
 from .group import ParagraphsGroup
 from .text_picker import TextPicker
-from .utils import create_node, escape_ascii
+from .utils import create_node
 
 class _XML:
   def __init__(self, page_content: str, parser: HTMLParser):
@@ -69,8 +69,6 @@ class EpubHandler:
     for _, target_text_list, index_list in translated_group_list:
       for i, text in enumerate(target_text_list):
         index = index_list[i]
-        if text != "":
-          text = escape_ascii(text)
         if index in target_texts_in_group:
           target_texts_in_group[index].append(text)
         else:
