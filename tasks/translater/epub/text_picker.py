@@ -8,7 +8,7 @@ _TEXT_TAG = (
   "pre", "code", "hr", "label",
 )
 _BAN_TO_STRING_TAG = (
-  "style", "css", "script", "metadata"
+  "title", "style", "css", "script", "metadata"
 )
 
 class _BaseDom:

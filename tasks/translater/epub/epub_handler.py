@@ -84,9 +84,10 @@ class EpubHandler:
 
     for index in range(len(source_texts)):
       if index in target_texts_in_group:
-        for text in target_texts_in_group[index]:
-          if text != "":
-            target_texts[index] = text
+        texts = target_texts_in_group[index]
+        text = "".join(texts).strip()
+        if text != "":
+          target_texts[index] = text
 
     picker.append_texts(target_texts)
 
