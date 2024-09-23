@@ -1,10 +1,10 @@
 import re
 
-from lxml import etree
+from lxml.etree import HTML
 from html import escape
 
 def create_node(node_str: str, parser):
-  return etree.HTML(node_str, parser=parser).find("body/*")
+  return HTML(node_str, parser=parser).find("body/*")
 
 def escape_ascii(content: str) -> str:
   content = escape(content)

@@ -1,5 +1,6 @@
 import io
 
+from typing import Generator
 from .paragraph_sliter import split_paragraph
 
 class Paragraph:
@@ -11,6 +12,7 @@ class ParagraphsGroup:
   def __init__(self, max_paragraph_len: int, max_group_len: int):
     self.max_paragraph_len: int = max_paragraph_len
     self.max_group_len: int = max_group_len
+    self.count = 0
 
   def split_text_list(self, text_list: list[str]) -> list[list[str]]:
     splited_text_list: list[list[str]] = []
@@ -74,36 +76,34 @@ class ParagraphsGroup:
       splited_paragraph_list.append(Paragraph(text, index))
       return
 
-    buffer = io.StringIO()
-    buffer_len = 0
+    for retuned_text in self._retune_paragraph(split_paragraph(text)):
+      splited_paragraph_list.append(Paragraph(
+        text=retuned_text,
+        index=index,
+      ))
 
-    for cell in split_paragraph(text):
-      if len(cell) + buffer_len <= self.max_paragraph_len:
-        buffer.write(cell)
-        buffer_len += len(cell)
-      else: 
+  def _retune_paragraph(self, texts: list[str]) -> Generator[str, None, None]:
+    buffer: list[str] = []
+    buffer_len: int = 0
+
+    for text in texts:
+      if buffer_len + len(text) <= self.max_paragraph_len:
+        buffer.append(text)
+        buffer_len += len(text)
+      else:
         if buffer_len > 0:
-          buffer.flush()
-          splited_paragraph_list.append(Paragraph(
-            text=buffer.getvalue(), 
-            index=index,
-          ))
-          buffer.close()
-          buffer = io.StringIO()
+          yield "".join(buffer)
+          buffer.clear()
           buffer_len = 0
-        while len(cell) > self.max_group_len:
-          splited_paragraph_list.append(Paragraph(
-            text=cell[:self.max_group_len], 
-            index=index,
-          ))
-          cell = cell[self.max_group_len:]
-        if len(cell) > 0:
-          buffer.write(cell)
 
+        while len(text) > self.max_paragraph_len:
+          head_text = text[:self.max_paragraph_len]
+          text = text[self.max_paragraph_len:]
+          yield head_text
+        
+        if len(text) > 0:
+          buffer.append(text)
+          buffer_len += len(text)
+    
     if buffer_len > 0:
-        buffer.flush()
-        splited_paragraph_list.append(Paragraph(
-          text=buffer.getvalue(), 
-          index=index,
-        ))
-    buffer.close()
+      yield "".join(buffer)

@@ -1,14 +1,15 @@
 import re
 import json
 
-from lxml import etree
+from lxml.etree import tostring, fromstring, HTMLParser
 
 from ..transalter import Translate
 from .group import ParagraphsGroup
-from .utils import create_node, escape_ascii
+from .text_picker import TextPicker
+from .utils import create_node
 
 class _XML:
-  def __init__(self, page_content: str, parser: etree.HTMLParser):
+  def __init__(self, page_content: str, parser: HTMLParser):
     regex = r"^<\?xml.*\?>"
     match = re.match(regex, page_content)
     xml = re.sub(regex, "", page_content)
@@ -18,7 +19,7 @@ class _XML:
     else:
       self.head = ""
 
-    self.root = etree.fromstring(xml, parser=parser)
+    self.root = fromstring(xml, parser=parser)
     self.nsmap: dict = self.root.nsmap.copy()
     self.root.nsmap.clear()
 
@@ -26,7 +27,7 @@ class _XML:
     for key, value in self.nsmap.items():
       self.root.nsmap[key] = value
 
-    text = etree.tostring(self.root, method="html", encoding="utf-8")
+    text = tostring(self.root, method="html", encoding="utf-8")
     text = text.decode("utf-8")
 
     # HTML 规定了一系列自闭标签，这些标签需要改成非自闭的，因为 EPub 格式不支持
@@ -41,11 +42,9 @@ class EpubHandler:
     self,
     translate: Translate,
     max_paragraph_characters: int,
-    clean_format: bool,
   ):
     self._translate: Translate = translate
-    self.parser = etree.HTMLParser(recover=True)
-    self.clean_format = clean_format
+    self.parser = HTMLParser(recover=True)
     self.group = ParagraphsGroup(
       max_paragraph_len=max_paragraph_characters,
       # https://support.google.com/translate/thread/18674882/how-many-words-is-maximum-in-google?hl=en
@@ -61,50 +60,27 @@ class EpubHandler:
 
   def translate_page(self, file_path: str, page_content: str):
     xml = _XML(page_content, self.parser)
-    source_dom_text_list: list[str] = []
-    p_doms = list(xml.root.xpath('//p'))
+    picker = TextPicker(xml.root, "text")
+    source_texts = picker.pick_texts()
+    target_texts: list[str] = ["" for _ in range(len(source_texts))]
+    translated_group_list = self._translate_group_by_group(file_path, source_texts)
+    target_texts_in_group: dict[int, list[str]] = {}
 
-    for p_dom in p_doms:
-      bin_text = etree.tostring(p_dom, method="html", encoding="utf-8")
-      source_dom_text_list.append(bin_text.decode("utf-8"))
-
-    translated_group_list = self._translate_group_by_group(file_path, source_dom_text_list)
-    to_target_text_pair_map: dict[int, list[list[str]]] = {}
-
-    for (source_text_list, target_text_list, index_list) in translated_group_list:
-      for i, target_text in enumerate(target_text_list):
-        source_text = source_text_list[i]
+    for _, target_text_list, index_list in translated_group_list:
+      for i, text in enumerate(target_text_list):
         index = index_list[i]
-
-        if target_text != "":
-          if self.clean_format:
-            target_text = escape_ascii(target_text)
-          else:
-            target_text = self._clean_p_tag(target_text)
-
-        pair = [source_text, target_text]
-
-        if index in to_target_text_pair_map:
-          to_target_text_pair_map[index].append(pair)
+        if index in target_texts_in_group:
+          target_texts_in_group[index].append(text)
         else:
-          to_target_text_pair_map[index] = [pair]
+          target_texts_in_group[index] = [text]
 
-    for index, p_dom in enumerate(p_doms):
-      if index in to_target_text_pair_map:
-        new_p_doms = []
-        for pair in to_target_text_pair_map[index]:
-          for text in pair:
-            if text != "":
-              new_p_text = self._wrap_with_p(p_dom, text)
-              new_p_dom = create_node(new_p_text, parser=self.parser)
-              new_p_doms.append(new_p_dom)
-    
-        parent_dom = p_dom.getparent()
-        index_at_parent = parent_dom.index(p_dom)
+    for index in range(len(source_texts)):
+      if index in target_texts_in_group:
+        texts = target_texts_in_group[index]
+        text = "".join(texts).strip()
+        target_texts[index] = text
 
-        for new_p_dom in reversed(new_p_doms):
-          parent_dom.insert(index_at_parent, new_p_dom)
-        parent_dom.remove(p_dom)
+    picker.append_texts(target_texts)
 
     return xml.encode()
 
@@ -142,17 +118,8 @@ class EpubHandler:
       if self._is_not_empty(text):
         text = f"<p>{text}</p>"
         dom = create_node(text, parser=self.parser)
-
-        if self.clean_format:
-          unformat_text = self._unformat(dom)
-          text = unformat_text
-        else:
-          # Some English books use <span> for indentation, which will affect translation and should be removed.
-          changed = self._try_to_clean_space(dom)
-          if changed:
-            bin_text = etree.tostring(dom, method="html", encoding="utf-8")
-            text = bin_text.decode("utf-8")
-          unformat_text = self._unformat(dom)
+        unformat_text = self._unformat(dom)
+        text = unformat_text
 
         if self._is_not_empty(unformat_text):
           to_translated_text_list.append(text)
@@ -163,6 +130,9 @@ class EpubHandler:
       target_text_list[index] = text
 
     return target_text_list
+
+  def _unformat(self, dom):
+    return tostring(dom, method="text", encoding="utf-8", pretty_print=False).decode("utf-8")
 
   def _emit_translation_task(self, source_text_list) -> list[str]:
     indexes = []
@@ -188,28 +158,6 @@ class EpubHandler:
         raise e
 
     return target_text_list
-
-  def _try_to_clean_space(self, dom):
-    span_list = []
-    changed = False
-    for dom in dom.xpath(".//span"):
-      span_list.append(dom)
-    for dom in span_list:
-      text_bin = etree.tostring(dom, method="text", encoding="utf-8", pretty_print=False)
-      if self._is_not_empty(text_bin.decode("utf-8")):
-        continue
-      tail = dom.tail
-      if tail is None:
-        tail = " "
-      else:
-        tail = f" {tail}"
-      dom.tail = tail
-      dom.getparent().remove(dom)
-      changed = True
-    return changed
-
-  def _unformat(self, dom):
-    return etree.tostring(dom, method="text", encoding="utf-8", pretty_print=False).decode("utf-8")
 
   def _is_not_empty(self, text: str) -> bool:
     return not re.match(r"^[\s\n]*$", text)

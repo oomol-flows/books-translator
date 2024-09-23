@@ -25,10 +25,6 @@ inputs_def:
     json_schema:
       contentMediaType: oomol/secret
       type: string
-  - handle: clean_format
-    json_schema:
-      type: boolean
-    value: true
   - handle: source
     json_schema:
       type: string
@@ -50,7 +46,7 @@ outputs_def:
       type: string
 icon: ":fa6-solid:book-open:currentColor:"
 ui:
-  default_width: 387
+  default_width: 478
 executor:
   name: python
   options:

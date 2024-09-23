@@ -29,7 +29,6 @@ def main(inputs: dict, context: Context):
   epub_handler = EpubHandler(
     translate=translater.translate,
     max_paragraph_characters=inputs["max_paragraph_characters"],
-    clean_format=inputs["clean_format"],
   )
   zip_data = translate_epub_file(
     context=context,

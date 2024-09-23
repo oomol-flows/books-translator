@@ -4,13 +4,12 @@ nodes:
     node_id: translater#1
     inputs_from:
       - handle: file
-        value: "/oomol-storage/books/Finish What You Start (Peter K Hollins).epub"
+        value: "/oomol-storage/books/The little prince (de Saint-Exupery Antoine,
+          Katherine Woods) (Z-Library).epub"
       - handle: title
-        value: Finish What You Start
+        value: The little prince
       - handle: max_paragraph_characters
         value: 400
-      - handle: clean_format
-        value: true
       - handle: source
         value: English
       - handle: target

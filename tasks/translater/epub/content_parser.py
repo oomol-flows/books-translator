@@ -1,7 +1,6 @@
 import os
 
-from lxml import etree
-from lxml.etree import QName
+from lxml.etree import parse, Element, QName
 from .utils import escape_ascii
 
 class Spine:
@@ -27,7 +26,7 @@ class EpubContent:
   def __init__(self, path: str):
     self.folder_path = path
     self._content_path = self._find_content_path(path)
-    self._tree = etree.parse(self._content_path)
+    self._tree = parse(self._content_path)
     self._namespaces = { "ns": self._tree.getroot().nsmap.get(None) }
     self._spine = self._tree.xpath("//ns:spine", namespaces=self._namespaces)[0]
     self._metadata = self._tree.xpath("//ns:metadata", namespaces=self._namespaces)[0]
@@ -37,7 +36,7 @@ class EpubContent:
     self._tree.write(self._content_path, pretty_print=True)
 
   def _find_content_path(self, path: str) -> str:
-    root = etree.parse(os.path.join(path, "META-INF", "container.xml")).getroot()
+    root = parse(os.path.join(path, "META-INF", "container.xml")).getroot()
     rootfile = root.xpath(
       "//ns:container/ns:rootfiles/ns:rootfile", 
       namespaces={ "ns": root.nsmap.get(None) },
@@ -134,7 +133,7 @@ class EpubContent:
       "opf": self._metadata.nsmap.get("opf"),
     }
     for author in reversed(authors):
-      creator_dom = etree.Element(QName(ns["dc"], "creator"))
+      creator_dom = Element(QName(ns["dc"], "creator"))
       creator_dom.set(QName(ns["opf"], "file-as"), author)
       creator_dom.set(QName(ns["opf"], "role"), "aut")
       creator_dom.text = escape_ascii(author)
