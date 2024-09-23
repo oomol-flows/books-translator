@@ -51,20 +51,44 @@ class TextPicker:
     self._root = root
     self._method: Literal["html", "text"] = method
     self._wrapped_root: Optional[_BaseDom] = None
+    self._inserted_none_counts: list[int] = []
 
   def pick_texts(self) -> list[str]:
     texts: list[str] = []
+
     self._wrapped_root = self._wrap_dom(self._root)
     self._collect_texts(self._wrapped_root, texts)
-    return texts
 
-  def append_texts(self, texts: list[Optional[str]]):
+    inserted_none_count: int = 0
+    picked_texts: list[str] = []
+
+    for text in texts:
+      if self._is_not_empty_str(text):
+        picked_texts.append(text)
+        self._inserted_none_counts.append(inserted_none_count)
+        inserted_none_count = 0
+      else:
+        inserted_none_count += 1
+
+    if inserted_none_count > 0:
+      self._inserted_none_counts.append(inserted_none_count)
+
+    return picked_texts
+
+  def append_texts(self, texts: list[str]):
     if self._wrapped_root is None:
       raise Exception("should call pick_texts before")
-    
-    texts = texts.copy()
-    texts.reverse() # to pop text from last to first
-    self._append_texts_after_dom(texts, self._wrapped_root)
+
+    target_texts: list[Optional[str]] = []
+
+    for i, count in enumerate(self._inserted_none_counts):
+      for _ in range(count):
+        target_texts.append(None)
+      if i < len(texts):
+        target_texts.append(texts[i])
+
+    target_texts.reverse() # to pop text from last to first
+    self._append_texts_after_dom(target_texts, self._wrapped_root)
 
   def to_string(self) -> str:
     bin = tostring(self._root, method="html", encoding="utf-8", pretty_print=False)

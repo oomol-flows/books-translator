@@ -65,7 +65,7 @@ class EpubHandler:
     xml = _XML(page_content, self.parser)
     picker = TextPicker(xml.root, "text")
     source_texts = picker.pick_texts()
-    target_texts: list[Optional[str]] = [None for _ in range(len(source_texts))]
+    target_texts: list[str] = ["" for _ in range(len(source_texts))]
     translated_group_list = self._translate_group_by_group(file_path, source_texts)
     target_texts_in_group: dict[int, list[str]] = {}
 
@@ -86,8 +86,7 @@ class EpubHandler:
       if index in target_texts_in_group:
         texts = target_texts_in_group[index]
         text = "".join(texts).strip()
-        if text != "":
-          target_texts[index] = text
+        target_texts[index] = text
 
     picker.append_texts(target_texts)
 
