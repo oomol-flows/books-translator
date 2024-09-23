@@ -1,14 +1,14 @@
 import re
 import json
 
-from lxml import etree
+from lxml.etree import tostring, fromstring, HTMLParser
 
 from ..transalter import Translate
 from .group import ParagraphsGroup
 from .utils import create_node, escape_ascii
 
 class _XML:
-  def __init__(self, page_content: str, parser: etree.HTMLParser):
+  def __init__(self, page_content: str, parser: HTMLParser):
     regex = r"^<\?xml.*\?>"
     match = re.match(regex, page_content)
     xml = re.sub(regex, "", page_content)
@@ -18,7 +18,7 @@ class _XML:
     else:
       self.head = ""
 
-    self.root = etree.fromstring(xml, parser=parser)
+    self.root = fromstring(xml, parser=parser)
     self.nsmap: dict = self.root.nsmap.copy()
     self.root.nsmap.clear()
 
@@ -26,7 +26,7 @@ class _XML:
     for key, value in self.nsmap.items():
       self.root.nsmap[key] = value
 
-    text = etree.tostring(self.root, method="html", encoding="utf-8")
+    text = tostring(self.root, method="html", encoding="utf-8")
     text = text.decode("utf-8")
 
     # HTML 规定了一系列自闭标签，这些标签需要改成非自闭的，因为 EPub 格式不支持
@@ -44,7 +44,7 @@ class EpubHandler:
     clean_format: bool,
   ):
     self._translate: Translate = translate
-    self.parser = etree.HTMLParser(recover=True)
+    self.parser = HTMLParser(recover=True)
     self.clean_format = clean_format
     self.group = ParagraphsGroup(
       max_paragraph_len=max_paragraph_characters,
@@ -62,16 +62,16 @@ class EpubHandler:
   def translate_page(self, file_path: str, page_content: str):
     xml = _XML(page_content, self.parser)
     source_dom_text_list: list[str] = []
-    p_doms = list(xml.root.xpath('//p'))
+    p_doms = list(xml.root.xpath("//p"))
 
     for p_dom in p_doms:
-      bin_text = etree.tostring(p_dom, method="html", encoding="utf-8")
+      bin_text = tostring(p_dom, method="html", encoding="utf-8")
       source_dom_text_list.append(bin_text.decode("utf-8"))
 
     translated_group_list = self._translate_group_by_group(file_path, source_dom_text_list)
-    to_target_text_pair_map: dict[int, list[list[str]]] = {}
+    to_target_text_pair_map: dict[int, list[tuple[str, str]]] = {}
 
-    for (source_text_list, target_text_list, index_list) in translated_group_list:
+    for source_text_list, target_text_list, index_list in translated_group_list:
       for i, target_text in enumerate(target_text_list):
         source_text = source_text_list[i]
         index = index_list[i]
@@ -82,7 +82,7 @@ class EpubHandler:
           else:
             target_text = self._clean_p_tag(target_text)
 
-        pair = [source_text, target_text]
+        pair = (source_text, target_text)
 
         if index in to_target_text_pair_map:
           to_target_text_pair_map[index].append(pair)
@@ -150,7 +150,7 @@ class EpubHandler:
           # Some English books use <span> for indentation, which will affect translation and should be removed.
           changed = self._try_to_clean_space(dom)
           if changed:
-            bin_text = etree.tostring(dom, method="html", encoding="utf-8")
+            bin_text = tostring(dom, method="html", encoding="utf-8")
             text = bin_text.decode("utf-8")
           unformat_text = self._unformat(dom)
 
@@ -195,7 +195,7 @@ class EpubHandler:
     for dom in dom.xpath(".//span"):
       span_list.append(dom)
     for dom in span_list:
-      text_bin = etree.tostring(dom, method="text", encoding="utf-8", pretty_print=False)
+      text_bin = tostring(dom, method="text", encoding="utf-8", pretty_print=False)
       if self._is_not_empty(text_bin.decode("utf-8")):
         continue
       tail = dom.tail
@@ -209,7 +209,7 @@ class EpubHandler:
     return changed
 
   def _unformat(self, dom):
-    return etree.tostring(dom, method="text", encoding="utf-8", pretty_print=False).decode("utf-8")
+    return tostring(dom, method="text", encoding="utf-8", pretty_print=False).decode("utf-8")
 
   def _is_not_empty(self, text: str) -> bool:
     return not re.match(r"^[\s\n]*$", text)

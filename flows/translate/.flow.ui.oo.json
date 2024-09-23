@@ -2,35 +2,35 @@
   "nodes": [
     {
       "id": "translater#1",
-      "contentWidth": 347.45440673828125,
-      "selected": true,
-      "dragging": false,
-      "position": {
-        "x": -153.658826652911,
-        "y": 35.46052148057629
-      },
-      "positionAbsolute": {
-        "x": -153.658826652911,
-        "y": 35.46052148057629
-      },
-      "width": 434,
-      "height": 447
-    },
-    {
-      "id": "file_writer#1",
-      "contentWidth": 200,
+      "contentWidth": 546.170908828404,
       "selected": false,
       "dragging": false,
       "position": {
-        "x": 467.6282065543868,
-        "y": 58.50130293766654
+        "x": 0,
+        "y": 0
       },
       "positionAbsolute": {
-        "x": 467.6282065543868,
-        "y": 61.50130293766654
+        "x": -153.658826652911,
+        "y": 35.46052148057629
       },
-      "width": 434,
-      "height": 322
+      "width": 560,
+      "height": 449
+    },
+    {
+      "id": "file_writer#1",
+      "contentWidth": 503.4707994565167,
+      "selected": false,
+      "dragging": false,
+      "position": {
+        "x": 610,
+        "y": 62.5
+      },
+      "positionAbsolute": {
+        "x": 562.3383416648329,
+        "y": 40.51836589137929
+      },
+      "width": 517,
+      "height": 324
     }
   ],
   "edges": [
