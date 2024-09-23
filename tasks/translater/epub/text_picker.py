@@ -4,7 +4,7 @@ from lxml.etree import tostring, Element
 
 _TEXT_TAG = (
   "h1", "h2", "h3", "h4", "h5", "h6",
-  "p", "span", "em", "strong", "blockquote", 
+  "a", "p", "span", "em", "strong", "blockquote", 
   "pre", "code", "hr", "label",
 )
 _BAN_TO_STRING_TAG = (
