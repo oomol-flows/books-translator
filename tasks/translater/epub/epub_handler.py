@@ -1,10 +1,12 @@
 import re
 import json
 
+from typing import Optional
 from lxml.etree import tostring, fromstring, HTMLParser
 
 from ..transalter import Translate
 from .group import ParagraphsGroup
+from .text_picker import TextPicker
 from .utils import create_node, escape_ascii
 
 class _XML:
@@ -61,50 +63,32 @@ class EpubHandler:
 
   def translate_page(self, file_path: str, page_content: str):
     xml = _XML(page_content, self.parser)
-    source_dom_text_list: list[str] = []
-    p_doms = list(xml.root.xpath("//p"))
+    picker = TextPicker(xml.root, "text")
+    source_texts = picker.pick_texts()
+    target_texts: list[Optional[str]] = [None for _ in range(len(source_texts))]
+    translated_group_list = self._translate_group_by_group(file_path, source_texts)
+    target_texts_in_group: dict[int, list[str]] = {}
 
-    for p_dom in p_doms:
-      bin_text = tostring(p_dom, method="html", encoding="utf-8")
-      source_dom_text_list.append(bin_text.decode("utf-8"))
-
-    translated_group_list = self._translate_group_by_group(file_path, source_dom_text_list)
-    to_target_text_pair_map: dict[int, list[tuple[str, str]]] = {}
-
-    for source_text_list, target_text_list, index_list in translated_group_list:
-      for i, target_text in enumerate(target_text_list):
-        source_text = source_text_list[i]
+    for _, target_text_list, index_list in translated_group_list:
+      for i, text in enumerate(target_text_list):
         index = index_list[i]
-
-        if target_text != "":
+        if text != "":
           if self.clean_format:
-            target_text = escape_ascii(target_text)
+            text = escape_ascii(text)
           else:
-            target_text = self._clean_p_tag(target_text)
-
-        pair = (source_text, target_text)
-
-        if index in to_target_text_pair_map:
-          to_target_text_pair_map[index].append(pair)
+            text = self._clean_p_tag(text)
+        if index in target_texts_in_group:
+          target_texts_in_group[index].append(text)
         else:
-          to_target_text_pair_map[index] = [pair]
+          target_texts_in_group[index] = [text]
 
-    for index, p_dom in enumerate(p_doms):
-      if index in to_target_text_pair_map:
-        new_p_doms = []
-        for pair in to_target_text_pair_map[index]:
-          for text in pair:
-            if text != "":
-              new_p_text = self._wrap_with_p(p_dom, text)
-              new_p_dom = create_node(new_p_text, parser=self.parser)
-              new_p_doms.append(new_p_dom)
-    
-        parent_dom = p_dom.getparent()
-        index_at_parent = parent_dom.index(p_dom)
+    for index in range(len(source_texts)):
+      if index in target_texts_in_group:
+        for text in target_texts_in_group[index]:
+          if text != "":
+            target_texts[index] = text
 
-        for new_p_dom in reversed(new_p_doms):
-          parent_dom.insert(index_at_parent, new_p_dom)
-        parent_dom.remove(p_dom)
+    picker.append_texts(target_texts)
 
     return xml.encode()
 
