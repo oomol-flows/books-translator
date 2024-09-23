@@ -147,7 +147,7 @@ class TextPicker:
           else:
             text = f"{child}\n{text}"
           if last_child is None:
-            wrapped_dom.dom.text = text
+            wrapped_dom.dom.text = text # html safety
           else:
             last_child.tail = text
         else:
@@ -159,7 +159,7 @@ class TextPicker:
 
   def _append_text_after_dom(self, dom, text: str) -> Optional[Any]:
     new_dom = Element(dom.tag)
-    new_dom.text = text
+    new_dom.text = text  # html safety
     for key, value in dom.attrib.items():
       new_dom.attrib[key] = value
 
