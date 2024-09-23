@@ -10,8 +10,6 @@ nodes:
         value: The little prince
       - handle: max_paragraph_characters
         value: 400
-      - handle: clean_format
-        value: true
       - handle: source
         value: English
       - handle: target

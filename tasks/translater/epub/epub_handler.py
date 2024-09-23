@@ -1,7 +1,6 @@
 import re
 import json
 
-from typing import Optional
 from lxml.etree import tostring, fromstring, HTMLParser
 
 from ..transalter import Translate
@@ -43,11 +42,9 @@ class EpubHandler:
     self,
     translate: Translate,
     max_paragraph_characters: int,
-    clean_format: bool,
   ):
     self._translate: Translate = translate
     self.parser = HTMLParser(recover=True)
-    self.clean_format = clean_format
     self.group = ParagraphsGroup(
       max_paragraph_len=max_paragraph_characters,
       # https://support.google.com/translate/thread/18674882/how-many-words-is-maximum-in-google?hl=en
@@ -73,10 +70,7 @@ class EpubHandler:
       for i, text in enumerate(target_text_list):
         index = index_list[i]
         if text != "":
-          if self.clean_format:
-            text = escape_ascii(text)
-          else:
-            text = self._clean_p_tag(text)
+          text = escape_ascii(text)
         if index in target_texts_in_group:
           target_texts_in_group[index].append(text)
         else:
@@ -126,17 +120,8 @@ class EpubHandler:
       if self._is_not_empty(text):
         text = f"<p>{text}</p>"
         dom = create_node(text, parser=self.parser)
-
-        if self.clean_format:
-          unformat_text = self._unformat(dom)
-          text = unformat_text
-        else:
-          # Some English books use <span> for indentation, which will affect translation and should be removed.
-          changed = self._try_to_clean_space(dom)
-          if changed:
-            bin_text = tostring(dom, method="html", encoding="utf-8")
-            text = bin_text.decode("utf-8")
-          unformat_text = self._unformat(dom)
+        unformat_text = self._unformat(dom)
+        text = unformat_text
 
         if self._is_not_empty(unformat_text):
           to_translated_text_list.append(text)
@@ -147,6 +132,9 @@ class EpubHandler:
       target_text_list[index] = text
 
     return target_text_list
+
+  def _unformat(self, dom):
+    return tostring(dom, method="text", encoding="utf-8", pretty_print=False).decode("utf-8")
 
   def _emit_translation_task(self, source_text_list) -> list[str]:
     indexes = []
@@ -172,28 +160,6 @@ class EpubHandler:
         raise e
 
     return target_text_list
-
-  def _try_to_clean_space(self, dom):
-    span_list = []
-    changed = False
-    for dom in dom.xpath(".//span"):
-      span_list.append(dom)
-    for dom in span_list:
-      text_bin = tostring(dom, method="text", encoding="utf-8", pretty_print=False)
-      if self._is_not_empty(text_bin.decode("utf-8")):
-        continue
-      tail = dom.tail
-      if tail is None:
-        tail = " "
-      else:
-        tail = f" {tail}"
-      dom.tail = tail
-      dom.getparent().remove(dom)
-      changed = True
-    return changed
-
-  def _unformat(self, dom):
-    return tostring(dom, method="text", encoding="utf-8", pretty_print=False).decode("utf-8")
 
   def _is_not_empty(self, text: str) -> bool:
     return not re.match(r"^[\s\n]*$", text)
