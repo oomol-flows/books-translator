@@ -1,0 +1,53 @@
+nodes:
+  - task:
+      ui:
+        default_width: 530
+      icon: ":logos:python:"
+      inputs_def:
+        - handle: srt_file
+          description: Input
+          json_schema:
+            type: string
+            ui:widget: file
+          value: input value
+        - handle: ai_token
+          json_schema:
+            type: string
+            contentMediaType: oomol/secret
+        - handle: group_size
+          json_schema:
+            type: integer
+      outputs_def:
+        - handle: bin
+          description: Output
+          json_schema:
+            type: string
+      executor:
+        name: python
+        options:
+          entry: scriptlets/+python#1.py
+    title: Translate SRT
+    node_id: +python#1
+    inputs_from:
+      - handle: srt_file
+        value: /oomol-storage/srt/LangChain Quick Start Guide with OOMOL.srt
+      - handle: ai_token
+        value: Custom,DeepSeek,API_Key
+      - handle: group_size
+        value: 25
+  - task: file::file_writer
+    title: "Write File #1"
+    node_id: file_writer#1
+    inputs_from:
+      - handle: create_folder_if_need
+        value: true
+      - handle: when_file_exists
+        value: override
+      - handle: binary
+        from_node:
+          - node_id: +python#1
+            output_handle: bin
+      - handle: file_name
+        value: translated.srt
+      - handle: output_folder
+        value: /oomol-storage/srt
