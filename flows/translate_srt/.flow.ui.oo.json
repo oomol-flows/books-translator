@@ -1,0 +1,40 @@
+{
+  "nodes": [
+    {
+      "id": "+python#1",
+      "contentWidth": 600.8867764598274,
+      "cardCollapse": {
+        "scriptlet": true
+      },
+      "selected": false,
+      "dragging": false,
+      "position": {
+        "x": 44.34702406757492,
+        "y": 46.736104278192244
+      },
+      "positionAbsolute": {
+        "x": 44.34702406757492,
+        "y": 46.736104278192244
+      },
+      "width": 615,
+      "height": 342
+    },
+    {
+      "id": "file_writer#1",
+      "contentWidth": 200,
+      "selected": true,
+      "dragging": false,
+      "position": {
+        "x": 770.8725128763723,
+        "y": 64.73610427819222
+      },
+      "positionAbsolute": {
+        "x": 770.8725128763723,
+        "y": 59.08765599744754
+      },
+      "width": 434,
+      "height": 324
+    }
+  ],
+  "edges": []
+}
