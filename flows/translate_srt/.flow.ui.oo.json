@@ -17,7 +17,7 @@
         "y": 46.736104278192244
       },
       "width": 615,
-      "height": 342
+      "height": 362
     },
     {
       "id": "file_writer#1",
@@ -33,8 +33,32 @@
         "y": 59.08765599744754
       },
       "width": 434,
-      "height": 324
+      "height": 341
     }
   ],
-  "edges": []
+  "edges": [
+    {
+      "id": "cd9cae56-1f94-415a-acc3-1c6dc1c53f40",
+      "connection": {
+        "from": {
+          "type": "from_node",
+          "source": {
+            "node_id": "+python#1",
+            "output_handle": "bin"
+          }
+        },
+        "to": {
+          "type": "to_node",
+          "target": {
+            "node_id": "file_writer#1",
+            "input_handle": "binary"
+          }
+        }
+      },
+      "gradientColor": [
+        "var(--edge-json)",
+        "var(--edge-json)"
+      ]
+    }
+  ]
 }

@@ -1,8 +1,0 @@
-container:
-  scripts:
-    # Script executed when the container is first loaded
-    # eg: bootstrap: pip install pandas
-    bootstrap: |
-      sudo apt-get update
-      pip install --upgrade pip
-      pip install -r requirements.txt
