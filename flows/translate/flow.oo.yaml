@@ -4,7 +4,8 @@ nodes:
     node_id: translater#1
     inputs_from:
       - handle: file
-        value: "/oomol-driver/oomol-storage/books/小王子.epub"
+        value: "/oomol-driver/oomol-storage/books/The little prince (de Saint-Exupery
+          Antoine, Katherine Woods) (Z-Library).epub"
       - handle: title
         value: The little prince
       - handle: max_paragraph_characters
