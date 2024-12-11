@@ -1,61 +1,22 @@
 {
-  "nodes": [
-    {
-      "id": "translater#1",
-      "contentWidth": 546.170908828404,
-      "selected": false,
-      "dragging": false,
-      "position": {
-        "x": 0,
-        "y": 0
-      },
-      "positionAbsolute": {
-        "x": -153.658826652911,
-        "y": 35.46052148057629
-      },
-      "width": 560,
-      "height": 450
-    },
-    {
-      "id": "file_writer#1",
-      "contentWidth": 503.4707994565167,
-      "selected": false,
-      "dragging": false,
-      "position": {
-        "x": 610,
-        "y": 62.5
-      },
-      "positionAbsolute": {
-        "x": 562.3383416648329,
-        "y": 40.51836589137929
-      },
-      "width": 517,
-      "height": 325
-    }
-  ],
-  "edges": [
-    {
-      "id": "bc3b21b4-f209-4674-aa74-ba867613e2da",
-      "connection": {
-        "from": {
-          "type": "from_node",
-          "source": {
-            "node_id": "translater#1",
-            "output_handle": "bin"
-          }
-        },
-        "to": {
-          "type": "to_node",
-          "target": {
-            "node_id": "file_writer#1",
-            "input_handle": "binary"
-          }
+  "nodes": {
+    "translater#1": {
+      "contentWidth": 438.8203125,
+      "rfNode": {
+        "position": {
+          "x": 0,
+          "y": 0
         }
-      },
-      "gradientColor": [
-        "var(--edge-json)",
-        "var(--edge-json)"
-      ]
+      }
+    },
+    "file_writer#1": {
+      "contentWidth": 486.20703125,
+      "rfNode": {
+        "position": {
+          "x": 524,
+          "y": 0
+        }
+      }
     }
-  ]
+  }
 }
