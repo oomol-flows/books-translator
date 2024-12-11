@@ -5,7 +5,7 @@ import tempfile
 import shutil
 
 from typing import Optional
-from lxml import etree
+from lxml.etree import parse
 from oocana import Context
 
 from .epub import EpubHandler, EpubContent
@@ -85,7 +85,7 @@ def _transalte_ncx(epub_content: EpubContent, handler: EpubHandler):
   ncx_path = epub_content.ncx_path
 
   if ncx_path is not None:
-    tree = etree.parse(ncx_path)
+    tree = parse(ncx_path)
     root = tree.getroot()
     namespaces={ "ns": root.nsmap.get(None) }
     text_doms = []

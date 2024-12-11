@@ -2,7 +2,6 @@ import re
 import json
 
 from lxml.etree import tostring, fromstring, HTMLParser
-
 from ..transalter import Translate
 from .group import ParagraphsGroup
 from .text_picker import TextPicker

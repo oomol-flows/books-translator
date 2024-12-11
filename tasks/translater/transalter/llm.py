@@ -52,7 +52,7 @@ class AITranslator:
 
     return to_text_list
 
-  def _request(self, messages: list):
+  def _request(self, messages: list[dict[str, str]]):
     response = requests.post(
       self._api_url,
       headers=self._headers,

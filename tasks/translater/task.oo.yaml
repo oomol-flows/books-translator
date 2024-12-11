@@ -50,6 +50,6 @@ ui:
 executor:
   name: python
   options:
-    spawn: false
     entry: __init__.py
+    spawn: false
 title: Translate epub book
