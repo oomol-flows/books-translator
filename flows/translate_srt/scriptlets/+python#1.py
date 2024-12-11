@@ -1,11 +1,10 @@
 import re
 import base64
 
-from typing import Any
 from oocana import Context
 from tasks.translater.transalter.llm import AITranslator
 
-def main(inputs: dict[str, Any], context: Context):
+def main(inputs: dict, context: Context):
   timestamps: list[str] = []
   texts: list[str] = []
 
