@@ -1,18 +1,17 @@
-import io
-
 from typing import Generator
+
+from dataclasses import dataclass
 from .paragraph_sliter import split_paragraph
 
+@dataclass
 class Paragraph:
-  def __init__(self, text: str, index: int):
-    self.text: str = text
-    self.index: int = index
+  text: str
+  index: int
 
 class ParagraphsGroup:
   def __init__(self, max_paragraph_len: int, max_group_len: int):
-    self.max_paragraph_len: int = max_paragraph_len
-    self.max_group_len: int = max_group_len
-    self.count = 0
+    self._max_paragraph_len: int = max_paragraph_len
+    self._max_group_len: int = max_group_len
 
   def split_text_list(self, text_list: list[str]) -> list[list[str]]:
     splited_text_list: list[list[str]] = []
@@ -20,10 +19,10 @@ class ParagraphsGroup:
     current_len = 0
 
     for text in text_list:
-      if len(text) > self.max_group_len:
-        text = text[:self.max_group_len]
+      if len(text) > self._max_group_len:
+        text = text[:self._max_group_len]
 
-      if current_len + len(text) > self.max_group_len:
+      if current_len + len(text) > self._max_group_len:
         splited_text_list.append(current_text_list)
         current_text_list = []
         current_len = 0
@@ -48,7 +47,7 @@ class ParagraphsGroup:
     current_paragraph_list: list[Paragraph] = []
 
     for paragraph in splited_paragraph_list:
-      if len(current_paragraph_list) > 0 and sum_len + len(paragraph.text) > self.max_group_len:
+      if len(current_paragraph_list) > 0 and sum_len + len(paragraph.text) > self._max_group_len:
         grouped_paragraph_list.append(current_paragraph_list)
         sum_len = 0
         self_paragraphs_count = 0
@@ -72,7 +71,7 @@ class ParagraphsGroup:
     return grouped_paragraph_list
 
   def _collect_text(self, index: int, text: str, splited_paragraph_list: list[Paragraph]):
-    if len(text) <= self.max_paragraph_len:
+    if len(text) <= self._max_paragraph_len:
       splited_paragraph_list.append(Paragraph(text, index))
       return
 
@@ -87,7 +86,7 @@ class ParagraphsGroup:
     buffer_len: int = 0
 
     for text in texts:
-      if buffer_len + len(text) <= self.max_paragraph_len:
+      if buffer_len + len(text) <= self._max_paragraph_len:
         buffer.append(text)
         buffer_len += len(text)
       else:
@@ -96,9 +95,9 @@ class ParagraphsGroup:
           buffer.clear()
           buffer_len = 0
 
-        while len(text) > self.max_paragraph_len:
-          head_text = text[:self.max_paragraph_len]
-          text = text[self.max_paragraph_len:]
+        while len(text) > self._max_paragraph_len:
+          head_text = text[:self._max_paragraph_len]
+          text = text[self._max_paragraph_len:]
           yield head_text
         
         if len(text) > 0:
