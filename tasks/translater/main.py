@@ -42,7 +42,6 @@ def main(inputs: dict, context: Context):
   epub_handler = EpubHandler(
     translate=translater.translate,
     source_lan=source_lan,
-    max_paragraph_chars=inputs["max_paragraph_chars"],
     max_translating_group=inputs["max_translating_group"],
     max_translating_group_unit=max_translating_group_unit,
   )

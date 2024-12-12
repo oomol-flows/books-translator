@@ -7,12 +7,6 @@ inputs_def:
   - handle: title
     json_schema:
       type: string
-  - handle: max_paragraph_chars
-    json_schema:
-      type: integer
-      minimum: 1
-      maximum: 5000
-    value: 400
   - handle: max_translating_group
     json_schema:
       type: integer

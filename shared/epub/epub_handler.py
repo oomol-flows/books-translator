@@ -43,7 +43,6 @@ class EpubHandler:
       self,
       translate: Translate,
       source_lan: Language,
-      max_paragraph_chars: int,
       max_translating_group: int,
       max_translating_group_unit: CountUnit,
     ):
@@ -51,7 +50,6 @@ class EpubHandler:
     self._parser: Any = HTMLParser(recover=True)
     self._group: ParagraphsGroup = ParagraphsGroup(
       source_lan=source_lan,
-      max_paragraph_chars=max_paragraph_chars,
       max_translating_group=max_translating_group,
       max_translating_group_unit=max_translating_group_unit,
     )

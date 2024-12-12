@@ -21,12 +21,10 @@ class ParagraphsGroup:
   def __init__(
       self,
       source_lan: Language,
-      max_paragraph_chars: int, # 限定每个段落的最大字符数（超过就拆分成新段），避免双语无法对照。
       max_translating_group: int,
       max_translating_group_unit: CountUnit,
     ):
     self._nlp: NLP = spacy.load(source_lan.spacy_model)
-    self._max_paragraph_chars: int = max_paragraph_chars
     self._max_translating_group: int = max_translating_group
     self._max_translating_group_unit: CountUnit = max_translating_group_unit
     self._token_encoder: tiktoken.Encoding = tiktoken.get_encoding("o200k_base")
@@ -70,50 +68,45 @@ class ParagraphsGroup:
     return grouped_paragraph_list
 
   def _collect_text(self, index: int, text: str) -> Generator[Paragraph, None, None]:
-    if len(text) <= self._max_paragraph_chars:
-      yield Paragraph(
-        text=text,
-        index=index,
-        count=self._text_count(text),
-      )
-      return
-
-    sentences: list[str] = []
-    for sent in self._nlp(text).sents:
-      sentences.append(sent.text)
-
-    for retuned_text in self._retune_paragraph(sentences):
-      yield Paragraph(
-        text=retuned_text,
-        index=index,
-        count=self._text_count(retuned_text)
-      )
-
-  def _retune_paragraph(self, sentences: list[str]) -> Generator[str, None, None]:
     buffer: list[str] = []
-    buffer_len: int = 0
+    buffer_count: int = 0
 
-    for sentence in sentences:
-      if buffer_len + len(sentence) <= self._max_paragraph_chars:
-        buffer.append(sentence)
-        buffer_len += len(sentence)
+    for sent in self._nlp(text).sents:
+      text = sent.text
+      count = self._text_count(text)
+      if buffer_count + count <= self._max_translating_group:
+        buffer.append(text)
+        buffer_count += count
       else:
-        if buffer_len > 0:
-          yield "".join(buffer)
+        if buffer_count > 0:
+          yield Paragraph(
+            text="".join(buffer),
+            index=index,
+            count=buffer_count
+          )
           buffer.clear()
-          buffer_len = 0
-
-        while len(sentence) > self._max_paragraph_chars:
-          head_text = sentence[:self._max_paragraph_chars]
-          sentence = sentence[self._max_paragraph_chars:]
-          yield head_text
+          buffer_count = 0
         
-        if len(sentence) > 0:
-          buffer.append(sentence)
-          buffer_len += len(sentence)
+        while count > self._max_translating_group:
+          head_text = text[:self._max_translating_group]
+          text = text[self._max_translating_group:]
+          yield Paragraph(
+            text=head_text,
+            index=index,
+            count=self._text_count(head_text)
+          )
+        
+        count = self._text_count(text)
+        if count > 0:
+          buffer.append(text)
+          buffer_count += count
     
-    if buffer_len > 0:
-      yield "".join(buffer)
+    if buffer_count > 0:
+      yield Paragraph(
+        text="".join(buffer),
+        index=index,
+        count=buffer_count
+      )
 
   def _text_count(self, text: str) -> int:
     if self._max_translating_group_unit == CountUnit.Token:

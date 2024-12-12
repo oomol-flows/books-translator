@@ -24,8 +24,6 @@ nodes:
           Antoine, Katherine Woods) (Z-Library).epub
       - handle: title
         value: 小王子
-      - handle: max_paragraph_chars
-        value: 400
       - handle: max_translating_group
         value: 2000
       - handle: max_translating_group_unit
