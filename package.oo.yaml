@@ -8,3 +8,6 @@ scripts:
     pip install -r requirements.txt
 dependencies:
   {}
+name: books-translater
+version: 0.0.2
+displayName: EPub 电子书翻译

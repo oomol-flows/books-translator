@@ -2,7 +2,7 @@ import unittest
 
 try:
   loader = unittest.TestLoader()
-  suite = loader.discover("tasks/translater/tests")
+  suite = loader.discover("./tests")
   runner = unittest.TextTestRunner()
   result = runner.run(suite)
   if not result.wasSuccessful():

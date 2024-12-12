@@ -8,7 +8,7 @@ from typing import Optional
 from lxml.etree import parse
 from oocana import Context
 
-from .epub import EpubHandler, EpubContent
+from utils.epub import EpubHandler, EpubContent
 from .ctx_tqdm import tqdm
 
 

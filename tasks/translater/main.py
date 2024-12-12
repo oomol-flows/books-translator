@@ -1,8 +1,8 @@
 import base64
 
 from oocana import Context
-from .epub import EpubHandler
-from .transalter import AITranslator
+from utils.epub import EpubHandler
+from utils.transalter import AITranslator
 from .file import translate_epub_file
 
 def main(inputs: dict, context: Context):

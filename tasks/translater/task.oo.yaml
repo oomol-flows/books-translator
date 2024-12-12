@@ -44,7 +44,7 @@ outputs_def:
     description: Output
     json_schema:
       type: string
-icon: ":fa6-solid:book-open:currentColor:"
+icon: ":twemoji:closed-book:"
 ui:
   default_width: 478
 executor:
