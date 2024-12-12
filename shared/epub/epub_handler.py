@@ -1,10 +1,10 @@
 import re
 import json
 
-from typing import Any, Generator
+from typing import Any
 from lxml.etree import tostring, fromstring, HTMLParser
 from shared.transalter import Translate
-from .group import ParagraphsGroup
+from .group import Paragraph, ParagraphsGroup
 from .text_picker import TextPicker
 from .utils import create_node
 
@@ -51,66 +51,51 @@ class EpubHandler:
       max_group_len=5000,
     )
 
-  def translate(self, text_list: list[str]):
-    to_text_list: list[str] = []
-    for text_list in self._group.split_text_list(text_list):
-      for text in self._translate(text_list):
-        to_text_list.append(text)
-    return to_text_list
-
   def translate_page(self, file_path: str, page_content: str):
     xml = _XML(page_content, self._parser)
     picker = TextPicker(xml.root, "text")
     source_texts = picker.pick_texts()
-    target_texts: list[str] = ["" for _ in range(len(source_texts))]
+    target_texts: list[str] = self.translate(source_texts)
+    picker.append_texts(target_texts)
+
+    return xml.encode()
+
+  def translate(self, text_list: list[str]) -> list[str]:
+    paragraph_groups = self._group.split(text_list)
     target_texts_in_group: dict[int, list[str]] = {}
 
-    for target_text_list, index_list in self._translate_group_by_group(file_path, source_texts):
-      for i, text in enumerate(target_text_list):
-        index = index_list[i]
-        if index in target_texts_in_group:
-          target_texts_in_group[index].append(text)
-        else:
-          target_texts_in_group[index] = [text]
+    for index, paragraphs in enumerate(paragraph_groups):
+      source_text_list = list(map(lambda x: self._clean_p_tag(x.text), paragraphs))
+      target_paragraphs: list[Paragraph] = []
+      for i, text in enumerate(self._translate_text_list(source_text_list)):
+        target_paragraphs.append(Paragraph(
+          text=text, 
+          index=paragraphs[i].index,
+        ))
 
-    for index in range(len(source_texts)):
+      # 长度为 2 的数组来源于裁剪，不得已，此时它的后继的首位不会与它重复，故不必裁剪
+      if index > 0 and len(paragraph_groups[index - 1]) > 2:
+        target_paragraphs.pop(0)
+      if index < len(paragraph_groups) - 1 and len(paragraphs) > 2:
+        target_paragraphs.pop()
+
+      for target in target_paragraphs:
+        if target.index in target_texts_in_group:
+          target_texts_in_group[target.index].append(target.text)
+        else:
+          target_texts_in_group[target.index] = [target.text]
+
+    target_texts: list[str] = ["" for _ in range(len(text_list))]
+
+    for index in range(len(text_list)):
       if index in target_texts_in_group:
         texts = target_texts_in_group[index]
         text = "".join(texts).strip()
         target_texts[index] = text
 
-    picker.append_texts(target_texts)
+    return target_texts
 
-    return xml.encode()
-
-  def _translate_group_by_group(
-    self, 
-    file_path: str, 
-    source_texts: list[str],
-  ) -> Generator[tuple[list[str], list[int]], None, None]:
-
-    paragraph_group_list = self._group.split_paragraphs(source_texts)
-
-    for index, paragraph_list in enumerate(paragraph_group_list):
-      source_texts = list(map(lambda x: self._clean_p_tag(x.text), paragraph_list))
-      target_texts = self._translate_text_list(source_texts)
-      index_list = list(map(lambda x: x.index, paragraph_list))
-
-      # 长度为 2 的数组来源于裁剪，不得已，此时它的后继的首位不会与它重复，故不必裁剪
-      if index > 0 and len(paragraph_group_list[index - 1]) > 2:
-        source_texts.pop(0)
-        target_texts.pop(0)
-        index_list.pop(0)
-
-      if index < len(paragraph_group_list) - 1 and len(paragraph_list) > 2:
-        source_texts.pop()
-        target_texts.pop()
-        index_list.pop()
-
-      yield target_texts, index_list
-      print(f"Translate completed: {file_path} task {index + 1}/{len(paragraph_group_list)}")
-
-  def _translate_text_list(self, source_text_list):
+  def _translate_text_list(self, source_text_list: list[str]):
     target_text_list: list[str] = [""] * len(source_text_list)
     to_translated_text_list: list[str] = []
     index_list: list[int] = []

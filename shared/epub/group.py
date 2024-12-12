@@ -13,29 +13,7 @@ class ParagraphsGroup:
     self._max_paragraph_len: int = max_paragraph_len
     self._max_group_len: int = max_group_len
 
-  def split_text_list(self, text_list: list[str]) -> list[list[str]]:
-    splited_text_list: list[list[str]] = []
-    current_text_list: list[str] = []
-    current_len = 0
-
-    for text in text_list:
-      if len(text) > self._max_group_len:
-        text = text[:self._max_group_len]
-
-      if current_len + len(text) > self._max_group_len:
-        splited_text_list.append(current_text_list)
-        current_text_list = []
-        current_len = 0
-      
-      current_text_list.append(text)
-      current_len += len(text)
-
-    if len(current_text_list) > 0:
-      splited_text_list.append(current_text_list)
-
-    return splited_text_list
-
-  def split_paragraphs(self, text_list: list[str]) -> list[list[Paragraph]]:
+  def split(self, text_list: list[str]) -> list[list[Paragraph]]:
     splited_paragraph_list: list[Paragraph] = []
 
     for index, text in enumerate(text_list):
