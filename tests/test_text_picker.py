@@ -2,7 +2,7 @@ import unittest
 
 from typing import Optional
 from lxml.etree import fromstring, tostring, HTMLParser
-from utils.epub.text_picker import TextPicker
+from shared.epub.text_picker import TextPicker
 
 class TestAddFunction(unittest.TestCase):
 
