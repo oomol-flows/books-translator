@@ -38,15 +38,17 @@ class ParagraphsGroup:
       for paragraph in self._collect_text(index, text):
         splited_paragraph_list.append(paragraph)
 
-    sum_len = 0
+    sum_count: int = 0
     self_paragraphs_count = 0
     grouped_paragraph_list: list[list[Paragraph]] = []
     current_paragraph_list: list[Paragraph] = []
 
     for paragraph in splited_paragraph_list:
-      if len(current_paragraph_list) > 0 and sum_len + len(paragraph.text) > self._max_translating_group:
+      if len(current_paragraph_list) > 0 and \
+         sum_count + paragraph.count > self._max_translating_group:
+
         grouped_paragraph_list.append(current_paragraph_list)
-        sum_len = 0
+        sum_count = 0
         self_paragraphs_count = 0
 
         # make sure the first and last two paragraphs in the group are repeated in the previous and next groups respectively, 
@@ -55,10 +57,10 @@ class ParagraphsGroup:
           current_paragraph_list = []
         else:
           current_paragraph_list = current_paragraph_list[-2:]
-          for cell in current_paragraph_list:
-            sum_len += len(cell.text)
+          for paragraph in current_paragraph_list:
+            sum_count += paragraph.count
 
-      sum_len += len(paragraph.text)
+      sum_count += paragraph.count
       self_paragraphs_count += 1
       current_paragraph_list.append(paragraph)
 
@@ -68,10 +70,12 @@ class ParagraphsGroup:
     return grouped_paragraph_list
 
   def _collect_text(self, index: int, text: str) -> Generator[Paragraph, None, None]:
-    count = self._text_count(text)
-
-    if count <= self._max_paragraph_chars:
-      yield Paragraph(text, index, count)
+    if len(text) <= self._max_paragraph_chars:
+      yield Paragraph(
+        text=text,
+        index=index,
+        count=self._text_count(text),
+      )
       return
 
     sentences: list[str] = []

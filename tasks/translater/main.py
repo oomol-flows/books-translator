@@ -7,7 +7,7 @@ from shared.language import language
 from .file import translate_epub_file
 
 def main(inputs: dict, context: Context):
-  ai = inputs["ai"]
+  ai: str = inputs["ai"]
   model: str
   api_url: str
 
