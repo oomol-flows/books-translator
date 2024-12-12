@@ -35,6 +35,6 @@ nodes:
       - handle: ai_token
         value: Custom,DeepSeek,Key
       - handle: source
-        value: English
+        value: en
       - handle: target
-        value: 中文
+        value: cn

@@ -44,16 +44,24 @@ inputs_def:
     json_schema:
       type: string
       enum:
-        - English
-        - 中文
+        - en
+        - cn
+      ui:options:
+        labels:
+          - English
+          - 中文
     value: English
   - handle: target
     json_schema:
       type: string
       enum:
-        - English
-        - 中文
-    value: 中文
+        - en
+        - cn
+      ui:options:
+        labels:
+          - English
+          - 中文
+    value: cn
 outputs_def:
   - handle: bin
     description: Output

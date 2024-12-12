@@ -4,6 +4,7 @@ import json
 from typing import Any
 from lxml.etree import tostring, fromstring, HTMLParser
 from shared.transalter import Translate
+from shared.language import Language
 from .group import Paragraph, ParagraphsGroup, CountUnit
 from .text_picker import TextPicker
 from .utils import create_node
@@ -41,6 +42,7 @@ class EpubHandler:
   def __init__(
       self,
       translate: Translate,
+      source_lan: Language,
       max_paragraph_chars: int,
       max_translating_group: int,
       max_translating_group_unit: CountUnit,
@@ -48,6 +50,7 @@ class EpubHandler:
     self._translate: Translate = translate
     self._parser: Any = HTMLParser(recover=True)
     self._group: ParagraphsGroup = ParagraphsGroup(
+      source_lan=source_lan,
       max_paragraph_chars=max_paragraph_chars,
       max_translating_group=max_translating_group,
       max_translating_group_unit=max_translating_group_unit,
@@ -73,6 +76,7 @@ class EpubHandler:
         target_paragraphs.append(Paragraph(
           text=text, 
           index=paragraphs[i].index,
+          count=paragraphs[i].count,
         ))
 
       # 长度为 2 的数组来源于裁剪，不得已，此时它的后继的首位不会与它重复，故不必裁剪
