@@ -54,7 +54,7 @@ class EpubHandler:
   def translate(self, text_list: list[str]):
     to_text_list: list[str] = []
     for text_list in self._group.split_text_list(text_list):
-      for text in self._emit_translation_task(text_list):
+      for text in self._translate(text_list):
         to_text_list.append(text)
     return to_text_list
 
@@ -111,54 +111,28 @@ class EpubHandler:
       print(f"Translate completed: {file_path} task {index + 1}/{len(paragraph_group_list)}")
 
   def _translate_text_list(self, source_text_list):
-    target_text_list = [""] * len(source_text_list)
-    to_translated_text_list = []
-    index_list = []
+    target_text_list: list[str] = [""] * len(source_text_list)
+    to_translated_text_list: list[str] = []
+    index_list: list[int] = []
 
     for index, text in enumerate(source_text_list):
       if self._is_not_empty(text):
         text = f"<p>{text}</p>"
         dom = create_node(text, parser=self._parser)
         unformat_text = self._unformat(dom)
-        text = unformat_text
 
         if self._is_not_empty(unformat_text):
-          to_translated_text_list.append(text)
+          to_translated_text_list.append(unformat_text)
           index_list.append(index)
 
-    for i, text in enumerate(self._emit_translation_task(to_translated_text_list)):
+    for i, text in enumerate(self._translate(to_translated_text_list)):
       index = index_list[i]
       target_text_list[index] = text
 
     return target_text_list
 
-  def _unformat(self, dom):
+  def _unformat(self, dom) -> str:
     return tostring(dom, method="text", encoding="utf-8", pretty_print=False).decode("utf-8")
-
-  def _emit_translation_task(self, source_text_list) -> list[str]:
-    indexes = []
-    contents = []
-
-    for index, source_text in enumerate(source_text_list):
-      if source_text != "" and not re.match(r"^[\s\n]+$", source_text):
-        indexes.append(index)
-        contents.append(source_text)
-    
-    target_text_list = [""] * len(source_text_list)
-
-    if len(contents) > 0:
-      try:
-        for i, text in enumerate(self._translate(contents)):
-          index = indexes[i]
-          target_text_list[index] = text
-
-      except Exception as e:
-        print("translate contents failed:")
-        for content in contents:
-          print(content)
-        raise e
-
-    return target_text_list
 
   def _is_not_empty(self, text: str) -> bool:
     return not re.match(r"^[\s\n]*$", text)
