@@ -4,7 +4,7 @@ import json
 from typing import Any
 from lxml.etree import tostring, fromstring, HTMLParser
 from shared.transalter import Translate
-from .group import Paragraph, ParagraphsGroup
+from .group import Paragraph, ParagraphsGroup, CountUnit
 from .text_picker import TextPicker
 from .utils import create_node
 
@@ -39,16 +39,18 @@ class _XML:
 
 class EpubHandler:
   def __init__(
-    self,
-    translate: Translate,
-    max_paragraph_characters: int,
-  ):
+      self,
+      translate: Translate,
+      max_paragraph_chars: int,
+      max_translating_group: int,
+      max_translating_group_unit: CountUnit,
+    ):
     self._translate: Translate = translate
     self._parser: Any = HTMLParser(recover=True)
     self._group: ParagraphsGroup = ParagraphsGroup(
-      max_paragraph_len=max_paragraph_characters,
-      # https://support.google.com/translate/thread/18674882/how-many-words-is-maximum-in-google?hl=en
-      max_group_len=5000,
+      max_paragraph_chars=max_paragraph_chars,
+      max_translating_group=max_translating_group,
+      max_translating_group_unit=max_translating_group_unit,
     )
 
   def translate_page(self, file_path: str, page_content: str):
