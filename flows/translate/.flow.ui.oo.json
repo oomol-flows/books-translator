@@ -1,19 +1,19 @@
 {
   "nodes": {
-    "translater#1": {
-      "contentWidth": 438.8203125,
-      "rfNode": {
-        "position": {
-          "x": 0,
-          "y": 0
-        }
-      }
-    },
     "file_writer#1": {
       "contentWidth": 486.20703125,
       "rfNode": {
         "position": {
           "x": 524,
+          "y": 0
+        }
+      }
+    },
+    "translater#2": {
+      "contentWidth": 478,
+      "rfNode": {
+        "position": {
+          "x": -75.13130690826893,
           "y": 0
         }
       }
