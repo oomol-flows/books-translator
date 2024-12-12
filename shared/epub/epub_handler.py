@@ -1,9 +1,11 @@
 import re
 import json
 
+from typing import Any
 from lxml.etree import tostring, fromstring, HTMLParser
-from ..transalter import Translate
-from .group import ParagraphsGroup
+from shared.transalter import Translate
+from shared.language import Language
+from .group import Paragraph, ParagraphsGroup, CountUnit
 from .text_picker import TextPicker
 from .utils import create_node
 
@@ -18,12 +20,12 @@ class _XML:
     else:
       self.head = ""
 
-    self.root = fromstring(xml, parser=parser)
-    self.nsmap: dict = self.root.nsmap.copy()
+    self.root: Any = fromstring(xml, parser=parser)
+    self._nsmap: dict = self.root.nsmap.copy()
     self.root.nsmap.clear()
 
   def encode(self) -> str:
-    for key, value in self.nsmap.items():
+    for key, value in self._nsmap.items():
       self.root.nsmap[key] = value
 
     text = tostring(self.root, method="html", encoding="utf-8")
@@ -38,125 +40,88 @@ class _XML:
 
 class EpubHandler:
   def __init__(
-    self,
-    translate: Translate,
-    max_paragraph_characters: int,
-  ):
+      self,
+      translate: Translate,
+      source_lan: Language,
+      max_translating_group: int,
+      max_translating_group_unit: CountUnit,
+    ):
     self._translate: Translate = translate
-    self.parser = HTMLParser(recover=True)
-    self.group = ParagraphsGroup(
-      max_paragraph_len=max_paragraph_characters,
-      # https://support.google.com/translate/thread/18674882/how-many-words-is-maximum-in-google?hl=en
-      max_group_len=5000,
+    self._parser: Any = HTMLParser(recover=True)
+    self._group: ParagraphsGroup = ParagraphsGroup(
+      source_lan=source_lan,
+      max_translating_group=max_translating_group,
+      max_translating_group_unit=max_translating_group_unit,
     )
 
-  def translate(self, text_list: list[str]):
-    to_text_list: list[str] = []
-    for text_list in self.group.split_text_list(text_list):
-      for text in self._emit_translation_task(text_list):
-        to_text_list.append(text)
-    return to_text_list
-
   def translate_page(self, file_path: str, page_content: str):
-    xml = _XML(page_content, self.parser)
+    xml = _XML(page_content, self._parser)
     picker = TextPicker(xml.root, "text")
     source_texts = picker.pick_texts()
-    target_texts: list[str] = ["" for _ in range(len(source_texts))]
-    translated_group_list = self._translate_group_by_group(file_path, source_texts)
+    target_texts: list[str] = self.translate(source_texts)
+    picker.append_texts(target_texts)
+
+    return xml.encode()
+
+  def translate(self, text_list: list[str]) -> list[str]:
+    paragraph_groups = self._group.split(text_list)
     target_texts_in_group: dict[int, list[str]] = {}
 
-    for _, target_text_list, index_list in translated_group_list:
-      for i, text in enumerate(target_text_list):
-        index = index_list[i]
-        if index in target_texts_in_group:
-          target_texts_in_group[index].append(text)
-        else:
-          target_texts_in_group[index] = [text]
+    for index, paragraphs in enumerate(paragraph_groups):
+      source_text_list = list(map(lambda x: self._clean_p_tag(x.text), paragraphs))
+      target_paragraphs: list[Paragraph] = []
+      for i, text in enumerate(self._translate_text_list(source_text_list)):
+        target_paragraphs.append(Paragraph(
+          text=text, 
+          index=paragraphs[i].index,
+          count=paragraphs[i].count,
+        ))
 
-    for index in range(len(source_texts)):
+      # 长度为 2 的数组来源于裁剪，不得已，此时它的后继的首位不会与它重复，故不必裁剪
+      if index > 0 and len(paragraph_groups[index - 1]) > 2:
+        target_paragraphs.pop(0)
+      if index < len(paragraph_groups) - 1 and len(paragraphs) > 2:
+        target_paragraphs.pop()
+
+      for target in target_paragraphs:
+        if target.index in target_texts_in_group:
+          target_texts_in_group[target.index].append(target.text)
+        else:
+          target_texts_in_group[target.index] = [target.text]
+
+    target_texts: list[str] = ["" for _ in range(len(text_list))]
+
+    for index in range(len(text_list)):
       if index in target_texts_in_group:
         texts = target_texts_in_group[index]
         text = "".join(texts).strip()
         target_texts[index] = text
 
-    picker.append_texts(target_texts)
+    return target_texts
 
-    return xml.encode()
-
-  def _translate_group_by_group(self, file_path: str, source_text_list: list[str]):
-    target_list = []
-    paragraph_group_list = self.group.split_paragraphs(source_text_list)
-
-    for index, paragraph_list in enumerate(paragraph_group_list):
-      source_text_list = list(map(lambda x: self._clean_p_tag(x.text), paragraph_list))
-      target_text_list = self._translate_text_list(source_text_list)
-      index_list = list(map(lambda x: x.index, paragraph_list))
-
-      # 长度为 2 的数组来源于裁剪，不得已，此时它的后继的首位不会与它重复，故不必裁剪
-      if index > 0 and len(paragraph_group_list[index - 1]) > 2:
-        source_text_list.pop(0)
-        target_text_list.pop(0)
-        index_list.pop(0)
-
-      if index < len(paragraph_group_list) - 1 and len(paragraph_list) > 2:
-        source_text_list.pop()
-        target_text_list.pop()
-        index_list.pop()
-
-      target_list.append((source_text_list, target_text_list, index_list))
-      print(f"Translate completed: {file_path} task {index + 1}/{len(paragraph_group_list)}")
-
-    return target_list
-
-  def _translate_text_list(self, source_text_list):
-    target_text_list = [""] * len(source_text_list)
-    to_translated_text_list = []
-    index_list = []
+  def _translate_text_list(self, source_text_list: list[str]):
+    target_text_list: list[str] = [""] * len(source_text_list)
+    to_translated_text_list: list[str] = []
+    index_list: list[int] = []
 
     for index, text in enumerate(source_text_list):
       if self._is_not_empty(text):
         text = f"<p>{text}</p>"
-        dom = create_node(text, parser=self.parser)
+        dom = create_node(text, parser=self._parser)
         unformat_text = self._unformat(dom)
-        text = unformat_text
 
         if self._is_not_empty(unformat_text):
-          to_translated_text_list.append(text)
+          to_translated_text_list.append(unformat_text)
           index_list.append(index)
 
-    for i, text in enumerate(self._emit_translation_task(to_translated_text_list)):
+    for i, text in enumerate(self._translate(to_translated_text_list)):
       index = index_list[i]
       target_text_list[index] = text
 
     return target_text_list
 
-  def _unformat(self, dom):
+  def _unformat(self, dom) -> str:
     return tostring(dom, method="text", encoding="utf-8", pretty_print=False).decode("utf-8")
-
-  def _emit_translation_task(self, source_text_list) -> list[str]:
-    indexes = []
-    contents = []
-
-    for index, source_text in enumerate(source_text_list):
-      if source_text != "" and not re.match(r"^[\s\n]+$", source_text):
-        indexes.append(index)
-        contents.append(source_text)
-    
-    target_text_list = [""] * len(source_text_list)
-
-    if len(contents) > 0:
-      try:
-        for i, text in enumerate(self._translate(contents)):
-          index = indexes[i]
-          target_text_list[index] = text
-
-      except Exception as e:
-        print("translate contents failed:")
-        for content in contents:
-          print(content)
-        raise e
-
-    return target_text_list
 
   def _is_not_empty(self, text: str) -> bool:
     return not re.match(r"^[\s\n]*$", text)

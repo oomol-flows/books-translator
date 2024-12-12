@@ -1,5 +1,5 @@
 from __future__ import annotations
-from typing import Any, Union, Optional, Literal
+from typing import Any, Literal
 from lxml.etree import tostring, Element
 
 _TEXT_TAG = (
@@ -13,9 +13,9 @@ _BAN_TO_STRING_TAG = (
 
 class _BaseDom:
   def __init__(self, dom, children: list[WrappedDom] = []):
-    self.dom = dom
-    self.children = children
-    self._should_child_dom_to_string: Optional[bool] = None
+    self.dom: Any = dom
+    self.children: list[WrappedDom] = children
+    self._should_child_dom_to_string: bool | None = None
 
   def to_string(self, method: Literal["html", "text"]) -> str:
     bin = tostring(self.dom, method=method, encoding="utf-8", pretty_print=False)
@@ -44,13 +44,13 @@ class TreeDom(_BaseDom):
 class TextDom(_BaseDom):
   pass
 
-WrappedDom = Union[str, _BaseDom]
+WrappedDom = str | _BaseDom
 
 class TextPicker:
   def __init__(self, root, method: Literal["html", "text"]):
     self._root = root
     self._method: Literal["html", "text"] = method
-    self._wrapped_root: Optional[_BaseDom] = None
+    self._wrapped_root: _BaseDom | None = None
     self._inserted_none_counts: list[int] = []
 
   def pick_texts(self) -> list[str]:
@@ -79,7 +79,7 @@ class TextPicker:
     if self._wrapped_root is None:
       raise Exception("should call pick_texts before")
 
-    target_texts: list[Optional[str]] = []
+    target_texts: list[str | None] = []
 
     for i, count in enumerate(self._inserted_none_counts):
       for _ in range(count):
@@ -127,7 +127,7 @@ class TextPicker:
         else:
           self._collect_texts(child, texts)
 
-  def _append_texts_after_dom(self, texts: list[Optional[str]], wrapped_dom: _BaseDom) -> Optional[Any]:
+  def _append_texts_after_dom(self, texts: list[str | None], wrapped_dom: _BaseDom) -> Any | None:
     if self._is_ban_to_string_tag(wrapped_dom.dom.tag):
       return None
 
@@ -157,7 +157,7 @@ class TextPicker:
 
       return wrapped_dom.dom
 
-  def _append_text_after_dom(self, dom, text: str) -> Optional[Any]:
+  def _append_text_after_dom(self, dom, text: str) -> Any | None:
     new_dom = Element(dom.tag)
     new_dom.text = text  # html safety
     for key, value in dom.attrib.items():
@@ -180,7 +180,7 @@ class TextPicker:
     global _BAN_TO_STRING_TAG
     return tag in _BAN_TO_STRING_TAG
 
-  def _is_not_empty_str(self, text: Optional[str]) -> bool:
+  def _is_not_empty_str(self, text: str | None) -> bool:
     if text is None:
       return False
     for char in text:

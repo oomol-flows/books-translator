@@ -1,12 +1,13 @@
 import base64
 
 from oocana import Context
-from shared.epub import EpubHandler
+from shared.epub import EpubHandler, CountUnit
 from shared.transalter import AITranslator
+from shared.language import language
 from .file import translate_epub_file
 
 def main(inputs: dict, context: Context):
-  ai = inputs["ai"]
+  ai: str = inputs["ai"]
   model: str
   api_url: str
 
@@ -19,16 +20,30 @@ def main(inputs: dict, context: Context):
   else:
     raise Exception(f"unknown AI: {ai}")
 
+  source_lan = language(inputs["source"])
+  target_lan = language(inputs["target"])
   translater = AITranslator(
     model=model,
     api_url=api_url,
     auth_token=inputs["ai_token"],
-    source_lan=_convert_to_lan_description(inputs["source"]),
-    target_lan=_convert_to_lan_description(inputs["target"]),
+    source_lan=source_lan.llm_name,
+    target_lan=target_lan.llm_name,
   )
+  max_translating_group_unit: CountUnit
+  group_unit: str = inputs["max_translating_group_unit"]
+
+  if group_unit == "char":
+    max_translating_group_unit = CountUnit.Char
+  elif group_unit == "token":
+    max_translating_group_unit = CountUnit.Token
+  else:
+    raise Exception(f"unknown max_translating_group_unit: {group_unit}")
+
   epub_handler = EpubHandler(
     translate=translater.translate,
-    max_paragraph_characters=inputs["max_paragraph_characters"],
+    source_lan=source_lan,
+    max_translating_group=inputs["max_translating_group"],
+    max_translating_group_unit=max_translating_group_unit,
   )
   zip_data = translate_epub_file(
     context=context,
@@ -39,11 +54,3 @@ def main(inputs: dict, context: Context):
   base64_str = base64.b64encode(zip_data).decode("utf-8")
 
   return { "bin": base64_str }
-
-def _convert_to_lan_description(lan_key: str) -> str:
-  if lan_key == "English":
-    return "English"
-  elif lan_key == "中文":
-    return "Chinese"
-  else:
-    raise Exception(f"unknown lan: {lan_key}")

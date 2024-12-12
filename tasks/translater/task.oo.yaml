@@ -4,16 +4,25 @@ inputs_def:
     json_schema:
       type: string
       ui:widget: file
-    value: ""
   - handle: title
     json_schema:
       type: string
-  - handle: max_paragraph_characters
+  - handle: max_translating_group
     json_schema:
       type: integer
       minimum: 1
-      maximum: 5000
-    value: 400
+    value: 2000
+    nullable: false
+  - handle: max_translating_group_unit
+    json_schema:
+      enum:
+        - char
+        - token
+      ui:options:
+        labels:
+          - Character
+          - Token
+    value: token
   - handle: ai
     json_schema:
       type: string
@@ -29,16 +38,24 @@ inputs_def:
     json_schema:
       type: string
       enum:
-        - English
-        - 中文
+        - en
+        - cn
+      ui:options:
+        labels:
+          - English
+          - 中文
     value: English
   - handle: target
     json_schema:
       type: string
       enum:
-        - English
-        - 中文
-    value: 中文
+        - en
+        - cn
+      ui:options:
+        labels:
+          - English
+          - 中文
+    value: cn
 outputs_def:
   - handle: bin
     description: Output

@@ -9,30 +9,30 @@ nodes:
         value: override
       - handle: binary
         from_node:
-          - node_id: translater#1
-            output_handle: bin
-          - node_id: translater#2
+          - node_id: translater#3
             output_handle: bin
       - handle: file_name
         value: target.epub
       - handle: output_folder
         value: /oomol-driver/oomol-storage
   - task: self::translater
-    title: "Translate epub book #2"
-    node_id: translater#2
+    title: "Translate epub book #3"
+    node_id: translater#3
     inputs_from:
       - handle: file
-        value: "/oomol-driver/oomol-storage/books/The little prince (de Saint-Exupery
-          Antoine, Katherine Woods) (Z-Library).epub"
+        value: /oomol-driver/oomol-storage/books/The little prince (de Saint-Exupery
+          Antoine, Katherine Woods) (Z-Library).epub
       - handle: title
         value: 小王子
-      - handle: max_paragraph_characters
-        value: 400
+      - handle: max_translating_group
+        value: 2000
+      - handle: max_translating_group_unit
+        value: token
       - handle: ai
         value: DeepSeek
       - handle: ai_token
         value: Custom,DeepSeek,Key
       - handle: source
-        value: English
+        value: en
       - handle: target
-        value: 中文
+        value: cn
