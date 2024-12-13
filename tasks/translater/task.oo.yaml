@@ -57,10 +57,10 @@ inputs_def:
           - 中文
     value: cn
 outputs_def:
-  - handle: bin
+  - handle: binary
     description: Output
     json_schema:
-      type: string
+      contentMediaType: oomol/bin
 icon: ":twemoji:closed-book:"
 ui:
   default_width: 478

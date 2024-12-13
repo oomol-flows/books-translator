@@ -1,5 +1,3 @@
-import base64
-
 from oocana import Context
 from shared.epub import EpubHandler, CountUnit
 from shared.transalter import AITranslator
@@ -51,6 +49,4 @@ def main(inputs: dict, context: Context):
     file_path=inputs["file"],
     book_title=inputs.get("title", None),
   )
-  base64_str = base64.b64encode(zip_data).decode("utf-8")
-
-  return { "bin": base64_str }
+  return { "binary": zip_data }

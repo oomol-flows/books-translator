@@ -1,4 +1,4 @@
-icon: https://oomol-flows.oss-cn-hangzhou.aliyuncs.com/1724145359_book.png
+icon: ":twemoji:orange-book:currentColor:"
 scripts:
   # Script executed when the container is first loaded
   # eg: bootstrap: pip install pandas
@@ -9,7 +9,7 @@ scripts:
     python -m spacy download en_core_web_sm
     python -m spacy download zh_core_web_sm
 dependencies:
-  {}
+  oomol-file: 0.0.1
 name: books-translater
 version: 0.0.2
 displayName: EPub 电子书翻译
