@@ -32,7 +32,7 @@ nodes:
       - handle: srt_file
         value: /oomol-storage/srt/LangChain Quick Start Guide with OOMOL.srt
       - handle: ai_token
-        value: Custom,DeepSeek,API_Key
+        value: Custom,DeepSeek,Key
       - handle: group_size
         value: 25
   - task: file::file_writer

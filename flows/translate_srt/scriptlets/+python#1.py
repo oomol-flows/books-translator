@@ -2,7 +2,7 @@ import re
 import base64
 
 from oocana import Context
-from tasks.translater.transalter.llm import AITranslator
+from shared.transalter import AITranslator
 
 def main(inputs: dict, context: Context):
   timestamps: list[str] = []
