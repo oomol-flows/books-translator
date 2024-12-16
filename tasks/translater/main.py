@@ -1,7 +1,6 @@
 from oocana import Context
 from shared.epub import EpubHandler, CountUnit
 from shared.transalter import AITranslator
-from shared.language import language
 from .file import translate_epub_file
 
 def main(inputs: dict, context: Context):
@@ -18,14 +17,12 @@ def main(inputs: dict, context: Context):
   else:
     raise Exception(f"unknown AI: {ai}")
 
-  source_lan = language(inputs["source"])
-  target_lan = language(inputs["target"])
   translater = AITranslator(
     model=model,
     api_url=api_url,
     auth_token=inputs["ai_token"],
-    source_lan=source_lan.llm_name,
-    target_lan=target_lan.llm_name,
+    source_lan=inputs["source"],
+    target_lan=inputs["target"],
   )
   max_translating_group_unit: CountUnit
   group_unit: str = inputs["max_translating_group_unit"]
@@ -39,7 +36,6 @@ def main(inputs: dict, context: Context):
 
   epub_handler = EpubHandler(
     translate=translater.translate,
-    source_lan=source_lan,
     max_translating_group=inputs["max_translating_group"],
     max_translating_group_unit=max_translating_group_unit,
   )

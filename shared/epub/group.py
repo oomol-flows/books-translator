@@ -4,8 +4,7 @@ import spacy
 from typing import Generator
 from dataclasses import dataclass
 from enum import Enum
-from spacy.language import Language as NLP
-from shared.language import Language
+from .nlp import NLP
 
 @dataclass
 class Paragraph:
@@ -20,11 +19,10 @@ class CountUnit(Enum):
 class ParagraphsGroup:
   def __init__(
       self,
-      source_lan: Language,
       max_translating_group: int,
       max_translating_group_unit: CountUnit,
     ):
-    self._nlp: NLP = spacy.load(source_lan.spacy_model)
+    self._nlp: NLP = NLP(default_lan="en")
     self._max_translating_group: int = max_translating_group
     self._max_translating_group_unit: CountUnit = max_translating_group_unit
     self._token_encoder: tiktoken.Encoding = tiktoken.get_encoding("o200k_base")
@@ -71,7 +69,7 @@ class ParagraphsGroup:
     buffer: list[str] = []
     buffer_count: int = 0
 
-    for sent in self._nlp(text).sents:
+    for sent in self._nlp.split_into_sents(text):
       text = sent.text
       count = self._text_count(text)
       if buffer_count + count <= self._max_translating_group:

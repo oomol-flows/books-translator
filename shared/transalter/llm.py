@@ -1,7 +1,15 @@
 import re
 import requests
 
-from typing import Optional
+from typing import cast, Optional
+
+_lan_full_name = {
+  "en": "English",
+  "cn": "simplified Chinese",
+  "fr": "French",
+  "ru": "Russian",
+  "de": "German",
+}
 
 class AITranslator:
   def __init__(
@@ -15,13 +23,19 @@ class AITranslator:
     self._model = model
     self._api_url = api_url
     self._admin_prompt: str = _admin_prompt(
-      target_lan=target_lan,
-      source_lan=source_lan,
+      target_lan=self._lan_full_name(target_lan),
+      source_lan=None if source_lan is None else self._lan_full_name(source_lan),
     )
     self._headers = {
       "Content-Type": "application/json",
       "Authorization": f"Bearer {auth_token}",
     }
+
+  def _lan_full_name(self, name: str) -> str:
+    full_name = _lan_full_name.get(name, None)
+    if full_name is None:
+      full_name = _lan_full_name["en"]
+    return full_name
 
   def translate(self, text_list: list[str]):
     text_buffer_list = []
