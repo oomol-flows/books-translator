@@ -4,3 +4,8 @@ requests==2.32.3
 tiktoken==0.8.0
 langid==1.1.6
 spacy==3.8.3
+langchain_core==0.3.25
+langchain_community==0.3.12
+langchain_openai==0.2.12
+langchain_anthropic==0.3.0
+langchain-google-vertexai==2.0.9
