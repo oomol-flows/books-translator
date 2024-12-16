@@ -1,4 +1,4 @@
 from typing import Callable
-from .llm import AITranslator
+from .translater import AITranslator
 
 Translate = Callable[[list[str]], list[str]]

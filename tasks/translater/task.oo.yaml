@@ -73,7 +73,7 @@ outputs_def:
     description: Output
     json_schema:
       contentMediaType: oomol/bin
-icon: ":twemoji:closed-book:"
+icon: ":twemoji:orange-book:"
 ui:
   default_width: 478
 executor:
