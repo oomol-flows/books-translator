@@ -50,7 +50,7 @@ inputs_def:
           - Français
           - Русский
           - Deutsch
-    value: English
+    value: en
   - handle: target
     json_schema:
       type: string
