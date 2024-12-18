@@ -15,7 +15,7 @@ scripts:
 dependencies:
   oomol-file: 0.0.1
 name: books-translater
-version: 0.0.3
+version: 0.0.1
 displayName: Translate epub books
 description: Translate the epub and display it in comparison with the original text
 releaseNotes: this is the first version.

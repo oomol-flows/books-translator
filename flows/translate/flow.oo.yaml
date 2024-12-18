@@ -20,10 +20,7 @@ nodes:
     node_id: translater#1
     inputs_from:
       - handle: file
-        value: /oomol-driver/oomol-storage/books/Finish What You Start (Peter K
-          Hollins).epub
       - handle: title
-        value: Finish What Your Start
       - handle: max_translating_group
         value: 2000
       - handle: max_translating_group_unit
@@ -35,11 +32,11 @@ nodes:
       - handle: llm_api
         value: openai
       - handle: model
-        value: "command-r-08-2024"
+        value: ""
       - handle: url
-        value: https://aigptx.top/v1
+        value: ""
       - handle: api_key
-        value: Custom,OhMyGPT,Key
+        value: ""
       - handle: temperature
         value: 0.4
       - handle: timeout
