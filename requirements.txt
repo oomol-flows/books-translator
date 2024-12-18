@@ -1,6 +1,5 @@
 tqdm==4.66.5
 lxml==5.3.0
-requests==2.32.3
 tiktoken==0.8.0
 langid==1.1.6
 spacy==3.8.3

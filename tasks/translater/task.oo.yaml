@@ -23,17 +23,6 @@ inputs_def:
           - Character
           - Token
     value: token
-  - handle: ai
-    json_schema:
-      type: string
-      enum:
-        - DeepSeek
-        - OpenAI
-    value: DeepSeek
-  - handle: ai_token
-    json_schema:
-      contentMediaType: oomol/secret
-      type: string
   - handle: source
     json_schema:
       type: string
@@ -68,6 +57,44 @@ inputs_def:
           - Русский
           - Deutsch
     value: cn
+  - handle: llm_api
+    json_schema:
+      enum:
+        - openai
+        - claude
+        - Gemini
+      ui:options:
+        labels:
+          - OpenAI
+          - Claude
+          - gemini
+    value: openai
+  - handle: model
+    json_schema:
+      type: string
+      minLength: 1
+    value: ""
+    nullable: false
+  - handle: url
+    json_schema:
+      type: string
+    value: ""
+  - handle: api_key
+    json_schema:
+      contentMediaType: oomol/secret
+      type: string
+    value: ""
+  - handle: temperature
+    json_schema:
+      type: number
+      minimum: 0
+    value: 0.4
+    nullable: false
+  - handle: timeout
+    json_schema:
+      type: number
+      minimum: 0
+    value: 0
 outputs_def:
   - handle: binary
     description: Output

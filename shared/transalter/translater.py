@@ -1,7 +1,5 @@
 import re
-import requests
-
-from typing import cast, Optional
+from .llm import LLM, LLM_API
 
 _lan_full_name = {
   "en": "English",
@@ -14,22 +12,27 @@ _lan_full_name = {
 class AITranslator:
   def __init__(
     self,
+    api: LLM_API, 
+    key: str | None, 
+    url: str | None, 
     model: str,
-    api_url: str,
-    auth_token: str,
+    temperature: float,
+    timeout: float | None,
+    source_lan: str | None,
     target_lan: str,
-    source_lan: Optional[str]
   ):
-    self._model = model
-    self._api_url = api_url
     self._admin_prompt: str = _admin_prompt(
       target_lan=self._lan_full_name(target_lan),
       source_lan=None if source_lan is None else self._lan_full_name(source_lan),
     )
-    self._headers = {
-      "Content-Type": "application/json",
-      "Authorization": f"Bearer {auth_token}",
-    }
+    self._llm: LLM = LLM(
+      api=api,
+      key=key,
+      url=url,
+      model=model,
+      temperature=temperature,
+      timeout=timeout,
+    )
 
   def _lan_full_name(self, name: str) -> str:
     full_name = _lan_full_name.get(name, None)
@@ -45,14 +48,10 @@ class AITranslator:
       text = text.strip()
       text_buffer_list.append(f"{index + 1}: {text}")
 
-    response = self._request([{
-      "role": "system",
-      "content": self._admin_prompt,
-    }, {
-      "role": "user",
-      "content": "\n".join(text_buffer_list),
-    }])
-    content: str = response["choices"][0]["message"]["content"]
+    content = self._llm.invoke(
+      system=self._admin_prompt,
+      human="\n".join(text_buffer_list),
+    )
     to_text_list = [""] * len(text_list)
 
     for line in content.split("\n"):
@@ -66,22 +65,7 @@ class AITranslator:
 
     return to_text_list
 
-  def _request(self, messages: list[dict[str, str]]):
-    response = requests.post(
-      self._api_url,
-      headers=self._headers,
-      stream=False,
-      json={
-        "model": self._model,
-        "messages": messages,
-      },
-    )
-    if response.status_code != 200:
-      raise Exception(f"request failed: {response.status_code}")
-
-    return response.json()
-
-def _admin_prompt(target_lan: str, source_lan: Optional[str]) -> str:
+def _admin_prompt(target_lan: str, source_lan: str | None) -> str:
   if source_lan is None:
     source_lan = "any language and you will detect the language"
   return f"""

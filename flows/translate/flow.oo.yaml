@@ -1,32 +1,11 @@
 nodes:
-  - task: self::translater
-    title: "Translate epub book #3"
-    node_id: translater#3
-    inputs_from:
-      - handle: file
-        value: /oomol-driver/oomol-storage/books/Finish What You Start (Peter K
-          Hollins).epub
-      - handle: title
-        value: Finish What You Start (Peter K Hollins)
-      - handle: max_translating_group
-        value: 2000
-      - handle: max_translating_group_unit
-        value: token
-      - handle: ai
-        value: DeepSeek
-      - handle: ai_token
-        value: Custom,DeepSeek,Key
-      - handle: source
-        value: en
-      - handle: target
-        value: fr
   - task: oomol-file::write-file
     title: "Write file #1"
     node_id: write-file#1
     inputs_from:
       - handle: binary
         from_node:
-          - node_id: translater#3
+          - node_id: translater#1
             output_handle: binary
       - handle: file_name
         value: target.epub
@@ -36,3 +15,32 @@ nodes:
         value: true
       - handle: when_file_exists
         value: rename
+  - task: self::translater
+    title: "Translate epub book #1"
+    node_id: translater#1
+    inputs_from:
+      - handle: file
+        value: /oomol-driver/oomol-storage/books/Finish What You Start (Peter K
+          Hollins).epub
+      - handle: title
+        value: Finish What Your Start
+      - handle: max_translating_group
+        value: 2000
+      - handle: max_translating_group_unit
+        value: token
+      - handle: source
+        value: en
+      - handle: target
+        value: cn
+      - handle: llm_api
+        value: openai
+      - handle: model
+        value: "command-r-08-2024"
+      - handle: url
+        value: https://aigptx.top/v1
+      - handle: api_key
+        value: Custom,OhMyGPT,Key
+      - handle: temperature
+        value: 0.4
+      - handle: timeout
+        value: 0

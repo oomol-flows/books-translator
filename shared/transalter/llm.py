@@ -1,6 +1,7 @@
 from typing import cast
 from enum import Enum
 from pydantic import SecretStr
+from langchain_core.messages import SystemMessage, HumanMessage
 from langchain_anthropic import ChatAnthropic
 from langchain_openai import ChatOpenAI
 from langchain_google_vertexai import ChatVertexAI
@@ -19,10 +20,10 @@ class LLM:
       url: str | None, 
       model: str,
       temperature: float,
-      timeout: float,
+      timeout: float | None,
     ) -> None:
     self._model: ChatAnthropic | ChatOpenAI
-    self._timeout: float = timeout
+    self._timeout: float | None = timeout
 
     if api == LLM_API.OpenAI:
       self._model = ChatOpenAI(
@@ -48,9 +49,12 @@ class LLM:
         temperature=temperature,
       )
   
-  def invoke(self, input: str) -> str:
+  def invoke(self, system: str, human: str) -> str:
     resp = self._model.invoke(
-      input=input,
       timeout=self._timeout,
+      input=[
+        SystemMessage(content=system),
+        HumanMessage(content=human),
+      ],
     )
     return str(resp.content)
