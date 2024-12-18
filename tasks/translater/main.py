@@ -1,31 +1,34 @@
 from oocana import Context
 from shared.epub import EpubHandler, CountUnit
-from shared.transalter import AITranslator
-from shared.language import language
+from shared.transalter import AITranslator, LLM_API
 from .file import translate_epub_file
 
 def main(inputs: dict, context: Context):
-  ai: str = inputs["ai"]
-  model: str
-  api_url: str
+  llm_api: str = inputs["llm_api"]
+  api: LLM_API
 
-  if ai == "DeepSeek":
-    model = "deepseek-chat"
-    api_url = "https://api.deepseek.com/chat/completions"
-  elif ai == "ChatGPT":
-    model = "gpt-3.5-turbo"
-    api_url = "https://aigptx.top/v1/chat/completions"
+  if llm_api == "openai":
+    api = LLM_API.OpenAI
+  elif llm_api == "claude":
+    api = LLM_API.Claude
+  elif llm_api == "gemini":
+    api = LLM_API.Gemini
   else:
-    raise Exception(f"unknown AI: {ai}")
+    raise Exception(f"unknown llm_api: {llm_api}")
 
-  source_lan = language(inputs["source"])
-  target_lan = language(inputs["target"])
+  timeout: float | None = inputs["timeout"]
+  if timeout == 0.0:
+    timeout = None
+
   translater = AITranslator(
-    model=model,
-    api_url=api_url,
-    auth_token=inputs["ai_token"],
-    source_lan=source_lan.llm_name,
-    target_lan=target_lan.llm_name,
+    api=api,
+    key=_none_if_empty(inputs["api_key"]),
+    url=_none_if_empty(inputs["url"]),
+    model=inputs["model"],
+    temperature=inputs["temperature"],
+    timeout=timeout,
+    source_lan=inputs["source"],
+    target_lan=inputs["target"],
   )
   max_translating_group_unit: CountUnit
   group_unit: str = inputs["max_translating_group_unit"]
@@ -39,7 +42,6 @@ def main(inputs: dict, context: Context):
 
   epub_handler = EpubHandler(
     translate=translater.translate,
-    source_lan=source_lan,
     max_translating_group=inputs["max_translating_group"],
     max_translating_group_unit=max_translating_group_unit,
   )
@@ -50,3 +52,6 @@ def main(inputs: dict, context: Context):
     book_title=inputs.get("title", None),
   )
   return { "binary": zip_data }
+
+def _none_if_empty(text: str) -> str | None:
+  return text.strip() == "" if None else text

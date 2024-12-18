@@ -3,13 +3,19 @@ scripts:
   # Script executed when the container is first loaded
   # eg: bootstrap: pip install pandas
   bootstrap: |
+    set -e
     sudo apt-get update
     pip install --upgrade pip
     pip install -r requirements.txt
     python -m spacy download en_core_web_sm
     python -m spacy download zh_core_web_sm
+    python -m spacy download fr_core_news_sm
+    python -m spacy download ru_core_news_sm
+    python -m spacy download de_core_news_sm
 dependencies:
   oomol-file: 0.0.1
 name: books-translater
-version: 0.0.2
-displayName: EPub 电子书翻译
+version: 0.0.1
+displayName: Translate epub books
+description: Translate the epub and display it in comparison with the original text
+releaseNotes: this is the first version.

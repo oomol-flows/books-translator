@@ -4,7 +4,6 @@ import json
 from typing import Any
 from lxml.etree import tostring, fromstring, HTMLParser
 from shared.transalter import Translate
-from shared.language import Language
 from .group import Paragraph, ParagraphsGroup, CountUnit
 from .text_picker import TextPicker
 from .utils import create_node
@@ -42,14 +41,12 @@ class EpubHandler:
   def __init__(
       self,
       translate: Translate,
-      source_lan: Language,
       max_translating_group: int,
       max_translating_group_unit: CountUnit,
     ):
     self._translate: Translate = translate
     self._parser: Any = HTMLParser(recover=True)
     self._group: ParagraphsGroup = ParagraphsGroup(
-      source_lan=source_lan,
       max_translating_group=max_translating_group,
       max_translating_group_unit=max_translating_group_unit,
     )
