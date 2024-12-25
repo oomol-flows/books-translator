@@ -22,7 +22,7 @@ class LLM:
       temperature: float,
       timeout: float | None,
     ) -> None:
-    self._model: ChatAnthropic | ChatOpenAI
+    self._model: ChatAnthropic | ChatOpenAI | ChatVertexAI
     self._timeout: float | None = timeout
 
     if api == LLM_API.OpenAI:
@@ -42,7 +42,7 @@ class LLM:
         temperature=temperature,
       )
     elif api == LLM_API.Gemini:
-      self._ = ChatVertexAI(
+      self._model = ChatVertexAI(
         model=model,
         base_url=url,
         timeout=timeout,
