@@ -41,6 +41,7 @@ class AITranslator:
     return full_name
 
   def translate(self, text_list: list[str]):
+    to_text_list = [""] * len(text_list)
     text_buffer_list: list[str] = []
     text_index_list: list[int] = []
 
@@ -51,6 +52,9 @@ class AITranslator:
         text_index = len(text_buffer_list)
         text_buffer_list.append(f"{text_index + 1}: {text}")
         text_index_list.append(text_index)
+
+    if len(text_buffer_list) == 0:
+      return to_text_list
 
     content = self._llm.invoke(
       system=self._admin_prompt,
@@ -64,7 +68,6 @@ class AITranslator:
         text = re.sub(r"^\d+\:\s*", "", line)
         target_text_list.append(text)
     
-    to_text_list = [""] * len(text_list)
     for index, text in zip(text_index_list, target_text_list):
       to_text_list[index] = text
 
