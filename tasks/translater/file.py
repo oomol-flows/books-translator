@@ -17,7 +17,6 @@ def translate_epub_file(
   handler: EpubHandler, 
   file_path: str, 
   book_title: Optional[str]) -> bytes:
-
   unzip_path = tempfile.mkdtemp()
 
   try:
@@ -27,6 +26,8 @@ def translate_epub_file(
         if member.endswith("/"):
             os.makedirs(target_path, exist_ok=True)
         else:
+          target_dir_path = os.path.dirname(target_path)
+          os.makedirs(target_dir_path, exist_ok=True)
           with zip_ref.open(member) as source, open(target_path, "wb") as file:
             file.write(source.read())
 

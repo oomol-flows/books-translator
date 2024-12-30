@@ -1,6 +1,6 @@
 from __future__ import annotations
 from typing import Any, Literal
-from lxml.etree import tostring, Element
+from lxml.etree import tostring, Element, _Comment
 
 _TEXT_TAG = (
   "h1", "h2", "h3", "h4", "h5", "h6",
@@ -150,7 +150,7 @@ class TextPicker:
             wrapped_dom.dom.text = text # html safety
           else:
             last_child.tail = text
-        else:
+        elif not isinstance(child.dom, _Comment):
           append_dom = self._append_texts_after_dom(texts, child)
           if append_dom is not None:
             last_child = append_dom
