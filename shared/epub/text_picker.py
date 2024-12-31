@@ -3,9 +3,7 @@ from typing import Any, Literal
 from lxml.etree import tostring, Element, _Comment
 
 _TEXT_TAG = (
-  "h1", "h2", "h3", "h4", "h5", "h6",
-  "a", "p", "span", "em", "strong", "blockquote", 
-  "pre", "code", "hr", "label",
+  "a", "span", "em", "strong", "blockquote",  "hr", "label",
 )
 _BAN_TO_STRING_TAG = (
   "title", "style", "css", "script", "metadata"
@@ -55,7 +53,6 @@ class TextPicker:
 
   def pick_texts(self) -> list[str]:
     texts: list[str] = []
-
     self._wrapped_root = self._wrap_dom(self._root)
     self._collect_texts(self._wrapped_root, texts)
 
@@ -137,25 +134,24 @@ class TextPicker:
         return None
       return self._append_text_after_dom(wrapped_dom.dom, text)
 
-    else:
-      last_child = None
-      for child in wrapped_dom.children:
-        if isinstance(child, str):
-          text = texts.pop()
-          if text is None:
-            text = child
-          else:
-            text = f"{child}\n{text}"
-          if last_child is None:
-            wrapped_dom.dom.text = text # html safety
-          else:
-            last_child.tail = text
-        elif not isinstance(child.dom, _Comment):
-          append_dom = self._append_texts_after_dom(texts, child)
-          if append_dom is not None:
-            last_child = append_dom
+    last_child = None
+    for child in wrapped_dom.children:
+      if isinstance(child, str):
+        text = texts.pop()
+        if text is None:
+          text = child
+        else:
+          text = f"{child}\n{text}"
+        if last_child is None:
+          wrapped_dom.dom.text = text # html safety
+        else:
+          last_child.tail = text
+      elif not isinstance(child.dom, _Comment):
+        append_dom = self._append_texts_after_dom(texts, child)
+        if append_dom is not None:
+          last_child = append_dom
 
-      return wrapped_dom.dom
+    return wrapped_dom.dom
 
   def _append_text_after_dom(self, dom, text: str) -> Any | None:
     new_dom = Element(dom.tag)

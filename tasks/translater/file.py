@@ -7,18 +7,16 @@ import shutil
 from typing import Optional
 from lxml.etree import parse
 from oocana import Context
-
 from shared.epub import EpubHandler, EpubContent
-from .ctx_tqdm import tqdm
 
 
 def translate_epub_file(
-  context: Context,
-  handler: EpubHandler, 
-  file_path: str, 
-  book_title: Optional[str]) -> bytes:
-  unzip_path = tempfile.mkdtemp()
+    context: Context,
+    handler: EpubHandler, 
+    file_path: str, 
+    book_title: Optional[str]) -> bytes:
 
+  unzip_path = tempfile.mkdtemp()
   try:
     with zipfile.ZipFile(file_path, "r") as zip_ref:
       for member in zip_ref.namelist():
@@ -65,13 +63,13 @@ def _translate_folder(
   if book_title is None:
     book_title = epub_content.title
     if not book_title is None:
-      book_title = _link_translated(book_title, handler.translate([book_title])[0])
+      book_title = _link_translated(book_title, handler.translate([book_title], lambda _: None)[0])
 
   if not book_title is None:
     epub_content.title = book_title
 
   authors = epub_content.authors
-  to_authors = handler.translate(authors)
+  to_authors = handler.translate(authors, lambda _: None)
 
   for i, author in enumerate(authors):
     authors[i] = _link_translated(author, to_authors[i])
@@ -96,7 +94,7 @@ def _transalte_ncx(epub_content: EpubContent, handler: EpubHandler):
       text_doms.append(text_dom)
       text_list.append(text_dom.text)
     
-    for index, text in enumerate(handler.translate(text_list)):
+    for index, text in enumerate(handler.translate(text_list, lambda _: None)):
       text_dom = text_doms[index]
       text_dom.text = _link_translated(text_dom.text, text)
 
@@ -104,14 +102,23 @@ def _transalte_ncx(epub_content: EpubContent, handler: EpubHandler):
 
 def _translate_spines(context: Context, epub_content: EpubContent, handler: EpubHandler):
   spines = epub_content.spines
-  for spine in tqdm(context, spines):
+  for index, spine in enumerate(spines):
     if spine.media_type == "application/xhtml+xml":
       file_path = spine.path
       with open(file_path, "r", encoding="utf-8") as file:
         content = file.read()
-        content = handler.translate_page(file_path, content)
+        content = handler.translate_page(
+          page_content=content,
+          report_progress=lambda p: context.report_progress(
+            progress=100.0 * (float(index) + p) / float(len(spines)),
+          ),
+        )
       with open(file_path, "w", encoding="utf-8") as file:
         file.write(content)
+    
+    context.report_progress(
+      progress=100.0 * float(index + 1) / float(len(spines)),
+    )
 
 def _link_translated(origin: str, target: str) -> str:
   if origin == target:

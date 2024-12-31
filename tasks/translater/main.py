@@ -1,6 +1,6 @@
 from oocana import Context
-from shared.epub import EpubHandler, CountUnit
-from shared.transalter import AITranslator, LLM_API
+from shared.epub import EpubHandler
+from shared.translater import Translater, LLM_API
 from .file import translate_epub_file
 
 def main(inputs: dict, context: Context):
@@ -20,7 +20,7 @@ def main(inputs: dict, context: Context):
   if timeout == 0.0:
     timeout = None
 
-  translater = AITranslator(
+  translater = Translater(
     api=api,
     key=_none_if_empty(inputs["api_key"]),
     url=_none_if_empty(inputs["url"]),
@@ -29,21 +29,10 @@ def main(inputs: dict, context: Context):
     timeout=timeout,
     source_lan=inputs["source"],
     target_lan=inputs["target"],
+    group_max_tokens=inputs["max_translating_group"],
   )
-  max_translating_group_unit: CountUnit
-  group_unit: str = inputs["max_translating_group_unit"]
-
-  if group_unit == "char":
-    max_translating_group_unit = CountUnit.Char
-  elif group_unit == "token":
-    max_translating_group_unit = CountUnit.Token
-  else:
-    raise Exception(f"unknown max_translating_group_unit: {group_unit}")
-
   epub_handler = EpubHandler(
     translate=translater.translate,
-    max_translating_group=inputs["max_translating_group"],
-    max_translating_group_unit=max_translating_group_unit,
   )
   zip_data = translate_epub_file(
     context=context,
