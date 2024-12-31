@@ -16,10 +16,11 @@ class Fragment:
   sentences: int
 
 class Group:
-  def __init__(self, group_max_tokens: int) -> None:
+  def __init__(self, group_max_tokens: int, interval_max_tokens: int) -> None:
     self._encoder: tiktoken.Encoding = tiktoken.get_encoding("o200k_base")
     self._nlp: NLP = NLP("en")
     self._group_max_tokens: int = group_max_tokens
+    self._interval_max_tokens: int = interval_max_tokens
 
   def split(self, texts: list[str]) -> list[list[Fragment]]:
     matrix: list[list[Fragment]] = []
@@ -77,18 +78,27 @@ class Group:
   def _split_fragments(self, fragments: list[Fragment]) -> Generator[list[Fragment], None, None]:
     current_group: list[Fragment] = []
     current_tokens: int = 0
-    last_tokens: int = 0
 
     for fragment in fragments:
       next_tokens: int = current_tokens + fragment.tokens
       if len(current_group) > 0 and next_tokens > self._group_max_tokens:
         yield current_group
-        current_group = [current_group[-1]]
-        current_tokens = last_tokens
+        current_group, current_tokens = self._keep_interval(current_group)
 
       current_group.append(fragment)
       current_tokens += fragment.tokens
-      last_tokens = fragment.tokens
 
     if len(current_group) > 0:
       yield current_group
+
+  def _keep_interval(self, group: list[Fragment]):
+    keep_group: list[Fragment] = []
+    keep_tokens: int = 0
+    for fragment in reversed(group):
+      next_tokens = keep_tokens + fragment.tokens
+      if len(keep_group) > 0 and next_tokens > self._interval_max_tokens:
+        break
+      keep_tokens += fragment.tokens
+      keep_group.append(fragment)
+    keep_group.reverse()
+    return keep_group, keep_tokens

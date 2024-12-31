@@ -1,4 +1,5 @@
 import re
+import math
 
 from typing import Callable
 from .group import Group, Fragment
@@ -14,18 +15,21 @@ _lan_full_name: dict[str, str] = {
 
 class Translater:
   def __init__(
-      self,
-      group_max_tokens: int,
-      api: LLM_API, 
-      key: str | None, 
-      url: str | None, 
-      model: str,
-      temperature: float,
-      timeout: float | None,
-      source_lan: str,
-      target_lan: str,
-    ) -> None:
-    self._group: Group = Group(group_max_tokens)
+        self,
+        group_max_tokens: int,
+        api: LLM_API, 
+        key: str | None, 
+        url: str | None, 
+        model: str,
+        temperature: float,
+        timeout: float | None,
+        source_lan: str,
+        target_lan: str,
+      ) -> None:
+    self._group: Group = Group(
+      group_max_tokens=group_max_tokens, 
+      interval_max_tokens=math.ceil(float(group_max_tokens) * 0.1),
+    )
     self._llm = LLM(
       api=api,
       key=key,
