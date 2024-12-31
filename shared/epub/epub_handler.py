@@ -44,7 +44,7 @@ class EpubHandler:
     xml = _XML(page_content, self._parser)
     picker = TextPicker(xml.root, "text")
     source_texts = [self._unformat_text(text) for text in picker.pick_texts()]
-    target_texts: list[str] = self.translate(source_texts, report_progress)
+    target_texts = self.translate(source_texts, report_progress)
     picker.append_texts(target_texts)
 
     return xml.encode()

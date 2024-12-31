@@ -31,5 +31,5 @@ class Group:
       current_tokens += tokens
       last_tokens = tokens
 
-    if len(current_group) > 1:
+    if len(current_group) > 0:
       yield current_group
