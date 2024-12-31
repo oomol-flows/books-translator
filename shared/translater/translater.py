@@ -49,7 +49,7 @@ class Translater:
         if operated_id > fragment.id:
           continue # fragment may be duplicated
         operated_id = max(operated_id, fragment.id)
-        target_texts[fragment.index] += fragment.text
+        target_texts[fragment.index] += fragment.target
       report_progress(float(operated_id + 1) / float(len(source_texts)))
 
     return target_texts
@@ -58,14 +58,14 @@ class Translater:
     texts: list[str] = []
     indexes: list[int] = []
     for index, fragment in enumerate(fragments):
-      text = fragment.text.strip()
+      text = fragment.origin.strip()
       if text != "":
         texts.append(text)
         indexes.append(index)
     if len(texts) > 0:
       texts = self._translate_texts(texts)
     for index, text in zip(indexes, texts):
-      fragments[index].text = text
+      fragments[index].target = text
     return fragments
 
   def _translate_texts(self, texts: list[str]) -> list[str]:

@@ -8,7 +8,8 @@ from .nlp import NLP
 @dataclass
 class Fragment:
   id: int
-  text: str
+  origin: str
+  target: str
   tokens: int
   index: int
   sentence_index: int
@@ -36,7 +37,8 @@ class Group:
       if tokens < self._group_max_tokens:
         fragments.append(Fragment(
           id=0,
-          text=text,
+          origin=text,
+          target="",
           tokens=tokens,
           index=index,
           sentence_index=0,
@@ -64,7 +66,8 @@ class Group:
     for sentence_index, (text, tokens) in enumerate(text_index_list):
       yield Fragment(
         id=0,
-        text=text, 
+        origin=text,
+        target="",
         tokens=tokens,
         index=index, 
         sentence_index=sentence_index, 
