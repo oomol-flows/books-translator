@@ -1,6 +1,6 @@
 from oocana import Context
 from shared.epub import EpubHandler, CountUnit
-from shared.transalter import AITranslator, LLM_API
+from shared.translater import AITranslator, LLM_API
 from .file import translate_epub_file
 
 def main(inputs: dict, context: Context):

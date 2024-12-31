@@ -3,7 +3,7 @@ import json
 
 from typing import Any
 from lxml.etree import tostring, fromstring, HTMLParser
-from shared.transalter import Translate
+from shared.translater import Translate
 from .group import Paragraph, ParagraphsGroup, CountUnit
 from .text_picker import TextPicker
 from .utils import create_node
