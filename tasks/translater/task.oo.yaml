@@ -13,16 +13,6 @@ inputs_def:
       minimum: 1
     value: 2000
     nullable: false
-  - handle: max_translating_group_unit
-    json_schema:
-      enum:
-        - char
-        - token
-      ui:options:
-        labels:
-          - Character
-          - Token
-    value: token
   - handle: source
     json_schema:
       type: string

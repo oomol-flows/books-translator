@@ -55,7 +55,6 @@ class TextPicker:
 
   def pick_texts(self) -> list[str]:
     texts: list[str] = []
-
     self._wrapped_root = self._wrap_dom(self._root)
     self._collect_texts(self._wrapped_root, texts)
 

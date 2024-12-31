@@ -23,8 +23,6 @@ nodes:
       - handle: title
       - handle: max_translating_group
         value: 2000
-      - handle: max_translating_group_unit
-        value: token
       - handle: source
         value: en
       - handle: target
