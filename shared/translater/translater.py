@@ -49,43 +49,47 @@ class Translater:
     operated_id: int = 0
 
     for fragments in grouped_fragments:
-      for fragment in self._translate_fragments(fragments):
+      fragments = self._translate_fragments(
+        fragments, 
+        report_progress=lambda p: report_progress(
+          float(operated_id + p) / float(len(source_texts)),
+        ),
+      )
+      for fragment in fragments:
         if operated_id > fragment.id:
           continue # fragment may be duplicated
         operated_id = max(operated_id, fragment.id)
         target_texts[fragment.index] += fragment.target
-      report_progress(float(operated_id + 1) / float(len(source_texts)))
 
     return target_texts
 
-  def _translate_fragments(self, fragments: list[Fragment]) -> list[Fragment]:
+  def _translate_fragments(self, fragments: list[Fragment], report_progress: Callable[[float], None]) -> list[Fragment]:
     texts: list[str] = []
+    translated_texts: list[str] = []
     indexes: list[int] = []
     for index, fragment in enumerate(fragments):
       text = fragment.origin.strip()
       if text != "":
         texts.append(text)
         indexes.append(index)
+
     if len(texts) > 0:
-      texts = self._translate_texts(texts)
-    for index, text in zip(indexes, texts):
+      for i, text in enumerate(self._translate_text_by_text(texts)):
+        report_progress(min(1.0, float(i) / float(len(texts))))
+        translated_texts.append(text)
+    report_progress(1.0)
+
+    for index, text in zip(indexes, translated_texts):
       fragments[index].target = text
     return fragments
 
-  def _translate_texts(self, texts: list[str]) -> list[str]:
-    texts = [f"{i+1}: {t}" for i, t in enumerate(texts)]
-    content = self._llm.invoke(
-      system=self._admin_prompt,
-      human="\n".join(texts),
-    )
-    target_texts: list[str] = []
-    for line in content.split("\n"):
+  def _translate_text_by_text(self, texts: list[str]):
+    system=self._admin_prompt
+    human="\n".join([f"{i+1}: {t}" for i, t in enumerate(texts)])
+    for line in self._llm.invoke_response_lines(system, human):
       match = re.search(r"^\d+\:", line)
       if match:
-        text = re.sub(r"^\d+\:\s*", "", line)
-        target_texts.append(text)
-
-    return target_texts
+        yield re.sub(r"^\d+\:\s*", "", line)
 
   def _lan_full_name(self, name: str) -> str:
     full_name = _lan_full_name.get(name, None)
