@@ -18,7 +18,7 @@ class Fragment:
 class Group:
   def __init__(self, group_max_tokens: int, interval_max_tokens: int) -> None:
     self._encoder: tiktoken.Encoding = tiktoken.get_encoding("o200k_base")
-    self._nlp: NLP = NLP("en")
+    self._nlp: NLP = NLP()
     self._group_max_tokens: int = group_max_tokens
     self._interval_max_tokens: int = interval_max_tokens
 
@@ -52,8 +52,7 @@ class Group:
 
   def _split_large_text(self, index: int, text: str) -> Generator[Fragment, None, None]:
     text_index_list: list[tuple[str, int]] = []
-    for sentence in self._nlp.split_into_sents(text):
-      text = sentence.text
+    for text in self._nlp.split_into_sents(text):
       tokens = self._encoder.encode(text)
       while len(tokens) > self._group_max_tokens:
         head_tokens = tokens[:self._group_max_tokens]

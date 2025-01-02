@@ -8,6 +8,7 @@ from .llm import LLM, LLM_API
 _lan_full_name: dict[str, str] = {
   "en": "English",
   "cn": "simplified Chinese",
+  "ja": "Japanese",
   "fr": "French",
   "ru": "Russian",
   "de": "German",

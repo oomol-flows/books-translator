@@ -19,6 +19,7 @@ inputs_def:
       enum:
         - en
         - cn
+        - ja
         - fr
         - ru
         - de
@@ -26,6 +27,7 @@ inputs_def:
         labels:
           - English
           - 中文
+          - 日本語
           - Français
           - Русский
           - Deutsch
@@ -36,6 +38,7 @@ inputs_def:
       enum:
         - en
         - cn
+        - ja
         - fr
         - ru
         - de
@@ -43,6 +46,7 @@ inputs_def:
         labels:
           - English
           - 中文
+          - 日本語
           - Français
           - Русский
           - Deutsch
