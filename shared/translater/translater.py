@@ -104,15 +104,19 @@ I want you to replace simplified A0-level words and sentences with more beautifu
 I want you to only reply the translation and nothing else, do not write explanations.
 A number and colon are added to the top of each line of text entered by the user. This number is only used to align the translation text for you and has no meaning in itself. You should delete the number in your mind to understand the user's original text.
 Your translation results should be split into a number of lines, the number of lines is equal to the number of lines in the user's original text. The content of each line should correspond to the corresponding line of the user's original text.
-The translated lines must not be missing, added, misplaced, or have their order changed. They must correspond exactly to the original text of the user.
+All user submitted text must be translated. The translated lines must not be missing, added, misplaced, or have their order changed. They must correspond exactly to the original text of the user.
 
 Here is an example. First, the user submits the original text in English (this is just an example):
-1: This true without lying, certain & most true:
-2: That which is below is like that which is above and that which is above is like that which is below to do ye miracles of one only thing.
-3: And as all things have been and arose from one by ye mediation of one: so all things have their birth from this one thing by adaptation.
+1: IV
+2: This true without lying, certain & most true:
+3: That which is below is like that which is above and that which is above is like that which is below to do ye miracles of one only thing.
+4: .+
+5: And as all things have been and arose from one by ye mediation of one: so all things have their birth from this one thing by adaptation.
 
 If you are asked to translate into Chinese, you need to submit the translated content in the following format:
-1: 这是真的，没有任何虚妄，是确定的，最真实的：
-2: 上如其下，下如其上，以此来展现“一”的奇迹。
-3: 万物皆来自“一”的沉思，万物在“一”的安排下诞生。
+1: 四
+2: 这是真的，没有任何虚妄，是确定的，最真实的：
+3: 上如其下，下如其上，以此来展现“一”的奇迹。
+4: .+
+5: 万物皆来自“一”的沉思，万物在“一”的安排下诞生。
 """

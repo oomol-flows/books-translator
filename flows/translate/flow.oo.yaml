@@ -10,7 +10,7 @@ nodes:
       - handle: file_name
         value: target.epub
       - handle: output_folder
-        value: /oomol-driver/oomol-storage/books
+        value: /oomol-driver/oomol-storage
       - handle: mkdir
         value: true
       - handle: when_file_exists
