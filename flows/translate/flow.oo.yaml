@@ -28,13 +28,13 @@ nodes:
       - handle: target
         value: cn
       - handle: llm_api
-        value: openai
+        value: oomol
       - handle: model
-        value: ""
+        value:
       - handle: url
-        value: ""
+        value:
       - handle: api_key
-        value: ""
+        value:
       - handle: temperature
         value: 0.4
       - handle: timeout
