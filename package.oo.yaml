@@ -15,8 +15,10 @@ scripts:
 dependencies:
   oomol-file: 0.0.1
 name: translate-epub-side-by-side
-version: 0.0.3
+version: 0.0.4
 displayName: Translate epub side by side
 description: Translate the epub book using LLM side by side.
-releaseNotes: optimize translation quality and adjust prompt words
+releaseNotes: 1. support streaming mode
+
+  2. support OOMOL LLMs Proxy
 repository: https://github.com/oomol-flows/books-translater

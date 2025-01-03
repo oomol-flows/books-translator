@@ -12,13 +12,11 @@ class Fragment:
   target: str
   tokens: int
   index: int
-  sentence_index: int
-  sentences: int
 
 class Group:
   def __init__(self, group_max_tokens: int, interval_max_tokens: int) -> None:
     self._encoder: tiktoken.Encoding = tiktoken.get_encoding("o200k_base")
-    self._nlp: NLP = NLP("en")
+    self._nlp: NLP = NLP()
     self._group_max_tokens: int = group_max_tokens
     self._interval_max_tokens: int = interval_max_tokens
 
@@ -42,8 +40,6 @@ class Group:
           target="",
           tokens=tokens,
           index=index,
-          sentence_index=0,
-          sentences=1,
         ))
       else:
         for fragment in self._split_large_text(index, text):
@@ -52,8 +48,7 @@ class Group:
 
   def _split_large_text(self, index: int, text: str) -> Generator[Fragment, None, None]:
     text_index_list: list[tuple[str, int]] = []
-    for sentence in self._nlp.split_into_sents(text):
-      text = sentence.text
+    for text in self._nlp.split_into_sents(text):
       tokens = self._encoder.encode(text)
       while len(tokens) > self._group_max_tokens:
         head_tokens = tokens[:self._group_max_tokens]
@@ -64,15 +59,13 @@ class Group:
         tail_text = self._encoder.decode(tokens)
         text_index_list.append((tail_text, len(tokens)))
 
-    for sentence_index, (text, tokens) in enumerate(text_index_list):
+    for text, tokens in text_index_list:
       yield Fragment(
         id=0,
         origin=text,
         target="",
         tokens=tokens,
         index=index, 
-        sentence_index=sentence_index, 
-        sentences=len(text_index_list),
       )
 
   def _split_fragments(self, fragments: list[Fragment]) -> Generator[list[Fragment], None, None]:

@@ -10,7 +10,7 @@ nodes:
       - handle: file_name
         value: target.epub
       - handle: output_folder
-        value: /oomol-driver/oomol-storage/books
+        value: /oomol-driver/oomol-storage
       - handle: mkdir
         value: true
       - handle: when_file_exists
@@ -28,13 +28,13 @@ nodes:
       - handle: target
         value: cn
       - handle: llm_api
-        value: openai
+        value: oomol
       - handle: model
-        value: ""
+        value:
       - handle: url
-        value: ""
+        value:
       - handle: api_key
-        value: ""
+        value:
       - handle: temperature
         value: 0.4
       - handle: timeout
