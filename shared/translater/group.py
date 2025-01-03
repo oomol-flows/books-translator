@@ -12,8 +12,6 @@ class Fragment:
   target: str
   tokens: int
   index: int
-  sentence_index: int
-  sentences: int
 
 class Group:
   def __init__(self, group_max_tokens: int, interval_max_tokens: int) -> None:
@@ -42,8 +40,6 @@ class Group:
           target="",
           tokens=tokens,
           index=index,
-          sentence_index=0,
-          sentences=1,
         ))
       else:
         for fragment in self._split_large_text(index, text):
@@ -63,15 +59,13 @@ class Group:
         tail_text = self._encoder.decode(tokens)
         text_index_list.append((tail_text, len(tokens)))
 
-    for sentence_index, (text, tokens) in enumerate(text_index_list):
+    for text, tokens in text_index_list:
       yield Fragment(
         id=0,
         origin=text,
         target="",
         tokens=tokens,
         index=index, 
-        sentence_index=sentence_index, 
-        sentences=len(text_index_list),
       )
 
   def _split_fragments(self, fragments: list[Fragment]) -> Generator[list[Fragment], None, None]:

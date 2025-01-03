@@ -51,11 +51,11 @@ class Translater:
     grouped_fragments = self._group.split(source_texts)
     operated_id: int = 0
 
-    for fragments in grouped_fragments:
+    for index, fragments in enumerate(grouped_fragments):
       fragments = self._translate_fragments(
         fragments, 
         report_progress=lambda p: report_progress(
-          float(operated_id + p) / float(len(source_texts)),
+          float(index + p) / float(len(grouped_fragments)),
         ),
       )
       for fragment in fragments:
