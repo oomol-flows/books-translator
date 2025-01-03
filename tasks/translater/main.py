@@ -20,6 +20,7 @@ def main(params: dict, context: Context):
     source_lan=params["source"],
     target_lan=params["target"],
     group_max_tokens=params["max_translating_group"],
+    streaming=True,
   )
   epub_handler = EpubHandler(
     translate=translater.translate,

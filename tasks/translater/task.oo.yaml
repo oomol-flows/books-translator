@@ -74,6 +74,7 @@ inputs_def:
   - handle: url
     json_schema:
       type: string
+      minLength: 1
     value:
     nullable: true
   - handle: api_key

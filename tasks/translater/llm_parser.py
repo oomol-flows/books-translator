@@ -13,10 +13,11 @@ def parse(params: dict, context: Context) -> LLMDescription:
   llm_api: str = params["llm_api"]
   if llm_api == "oomol":
     env = context.oomol_llm_env
+    base_url: str = env["base_url"]
     return LLMDescription(
       api=LLM_API.OpenAI,
       key=env["api_key"],
-      url=env["base_url"],
+      url=f"{base_url}/v1",
       model=_default(params["model"], env["models"][0]),
     )
   else:
@@ -26,7 +27,7 @@ def parse(params: dict, context: Context) -> LLMDescription:
       raise ValueError("model is required")
     return LLMDescription(
       api=api,
-      key=params["key"],
+      key=params["api_key"],
       url=params["url"],
       model=model,
     )

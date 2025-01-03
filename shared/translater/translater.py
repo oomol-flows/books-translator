@@ -1,7 +1,7 @@
 import re
 import math
 
-from typing import Callable
+from typing import Callable, Iterable
 from .group import Group, Fragment
 from .llm import LLM, LLM_API
 
@@ -26,7 +26,9 @@ class Translater:
         timeout: float | None,
         source_lan: str,
         target_lan: str,
-      ) -> None:
+        streaming: bool) -> None:
+
+    self._streaming: bool = streaming
     self._group: Group = Group(
       group_max_tokens=group_max_tokens, 
       interval_max_tokens=math.ceil(float(group_max_tokens) * 0.1),
@@ -87,7 +89,12 @@ class Translater:
   def _translate_text_by_text(self, texts: list[str]):
     system=self._admin_prompt
     human="\n".join([f"{i+1}: {t}" for i, t in enumerate(texts)])
-    for line in self._llm.invoke_response_lines(system, human):
+    iter_lines: Iterable[str]
+    if self._streaming:
+      iter_lines = self._llm.invoke_response_lines(system, human)
+    else:
+      iter_lines = self._llm.invoke(system, human).split("\n")
+    for line in iter_lines:
       match = re.search(r"^\d+\:", line)
       if match:
         yield re.sub(r"^\d+\:\s*", "", line)
