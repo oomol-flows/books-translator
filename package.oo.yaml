@@ -6,7 +6,7 @@ scripts:
     set -e
     sudo apt-get update
     pip install --upgrade pip
-    pip install -r requirements.txt
+    BLIS_ARCH="generic" pip install -r requirements.txt
     python -m spacy download en_core_web_sm
     python -m spacy download zh_core_web_sm
     python -m spacy download fr_core_news_sm
@@ -15,10 +15,8 @@ scripts:
 dependencies:
   oomol-file: 0.0.1
 name: translate-epub-side-by-side
-version: 0.0.4
+version: 0.0.5
 displayName: Translate epub side by side
 description: Translate the epub book using LLM side by side.
-releaseNotes: 1. support streaming mode
-
-  2. support OOMOL LLMs Proxy
+releaseNotes: fix bootstrap will fail
 repository: https://github.com/oomol-flows/books-translater
