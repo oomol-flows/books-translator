@@ -1,20 +1,4 @@
 nodes:
-  - task: oomol-file::write-file
-    title: "Write file #1"
-    node_id: write-file#1
-    inputs_from:
-      - handle: binary
-        from_node:
-          - node_id: translater#1
-            output_handle: binary
-      - handle: file_name
-        value: target.epub
-      - handle: output_folder
-        value: /oomol-driver/oomol-storage
-      - handle: mkdir
-        value: true
-      - handle: when_file_exists
-        value: rename
   - task: self::translater
     title: "Translate epub book #1"
     node_id: translater#1
@@ -39,3 +23,17 @@ nodes:
         value: 0.4
       - handle: timeout
         value: 0
+  - task: oomol-file::binary_to_file
+    title: "Binary to file #1"
+    node_id: binary_to_file#1
+    inputs_from:
+      - handle: binary
+        from_node:
+          - node_id: translater#1
+            output_handle: binary
+      - handle: file_name
+      - handle: output_folder
+      - handle: mkdir
+        value: false
+      - handle: when_file_exists
+        value: rename
