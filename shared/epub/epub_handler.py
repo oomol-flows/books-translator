@@ -55,9 +55,9 @@ class EpubHandler:
       text = f"<p>{text}</p>"
       dom = create_node(text, parser=self._parser)
       text = tostring(
-        dom, 
-        method="text", 
-        encoding="utf-8", 
+        dom,
+        method="text",
+        encoding="utf-8",
         pretty_print=False,
       ).decode("utf-8")
     return text

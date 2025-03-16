@@ -65,7 +65,7 @@ class Group:
         origin=text,
         target="",
         tokens=tokens,
-        index=index, 
+        index=index,
       )
 
   def _split_fragments(self, fragments: list[Fragment]) -> Generator[list[Fragment], None, None]:

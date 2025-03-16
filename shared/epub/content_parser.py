@@ -38,7 +38,7 @@ class EpubContent:
   def _find_content_path(self, path: str) -> str:
     root = parse(os.path.join(path, "META-INF", "container.xml")).getroot()
     rootfile = root.xpath(
-      "//ns:container/ns:rootfiles/ns:rootfile", 
+      "//ns:container/ns:rootfiles/ns:rootfile",
       namespaces={ "ns": root.nsmap.get(None) },
     )[0]
     full_path = rootfile.attrib["full-path"]
@@ -57,7 +57,7 @@ class EpubContent:
 
       if os.path.exists(path):
         return path
-      
+
       path = os.path.join(self.folder_path, path)
       path = os.path.abspath(path)
       return path
@@ -66,7 +66,7 @@ class EpubContent:
   def spines(self):
     idref_dict = {}
     index = 0
-  
+
     for child in self._spine.iterchildren():
       id = child.get("idref")
       idref_dict[id] = index
@@ -82,7 +82,7 @@ class EpubContent:
         items[index] = child
 
     base_path = os.path.dirname(self._content_path)
-    
+
     for item in items:
       if item is not None:
         spines.append(Spine(
@@ -108,7 +108,7 @@ class EpubContent:
 
   def _get_title(self):
     titles = self._metadata.xpath(
-      "./dc:title", 
+      "./dc:title",
       namespaces={
         "dc": self._metadata.nsmap.get("dc"),
       },
@@ -144,7 +144,7 @@ class EpubContent:
 
   def _get_creators(self):
     return self._metadata.xpath(
-      "./dc:creator", 
+      "./dc:creator",
       namespaces={
         "dc": self._metadata.nsmap.get("dc"),
       },

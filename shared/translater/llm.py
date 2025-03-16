@@ -15,10 +15,10 @@ class LLM_API(Enum):
 
 class LLM:
   def __init__(
-      self, 
-      api: LLM_API, 
-      key: str | None, 
-      url: str | None, 
+      self,
+      api: LLM_API,
+      key: str | None,
+      url: str | None,
       model: str,
       temperature: float,
       timeout: float | None,
@@ -49,7 +49,7 @@ class LLM:
         timeout=timeout,
         temperature=temperature,
       )
-  
+
   def invoke(self, system: str, human: str) -> str:
     resp = self._model.invoke(
       timeout=self._timeout,
