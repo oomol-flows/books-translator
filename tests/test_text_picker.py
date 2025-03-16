@@ -1,48 +1,34 @@
 import unittest
-
-from typing import Optional
-from lxml.etree import fromstring, tostring, HTMLParser
-from shared.epub.text_picker import TextPicker
+from shared.epub import translate_html
 
 class TestAddFunction(unittest.TestCase):
 
   def test_string_logic(self):
-    root_text = "<body>hello<span>the</span>world</body>"
-    root = fromstring(
-      root_text,
-      parser=HTMLParser(recover=True),
+    target = translate_html(
+      translate=lambda texts, _: [t for t in texts],
+      file_content = "<html><body>hello<span>the</span>world</body></html>",
+      report_progress=lambda _: None,
     )
-    body_dom = root.xpath("//body")[0]
-    bin = tostring(body_dom, method="html", encoding="utf-8", pretty_print=False)
-    self.assertEqual(bin.decode("utf-8"), root_text)
-
+    self.assertEqual(
+      first=target,
+      second="<html><body>hello<span>the</span>world</body><body>hellotheworld</body></html>",
+    )
 
   def test_pick_and_replace_content(self):
     # Just a smoke test
-    root = fromstring(
-      self.get_test_xml_content(), 
-      parser=HTMLParser(recover=True),
+    translate_html(
+      translate=lambda texts, _: [""],
+      file_content = self._get_test_xml_content(),
+      report_progress=lambda _: None,
     )
-    picker = TextPicker(root, "text")
-    texts: list[Optional[str]] = []
-    for text in picker.pick_texts():
-      text = text.strip()
-      if text == "":
-        text = None
-      else:
-        if len(text) > 25:
-          text = f"{text[:25]}..."
-        text = text.replace("\n", "")
-        text = f"BEGIN:{text}:END"
-      texts.append(text)
 
-  def get_test_xml_content(self) -> str:
+  def _get_test_xml_content(self) -> str:
     return """
       <html xmlns="http://www.w3.org/1999/xhtml">\n
 
       <head>\n <title>The little prince</title>\n
           <meta content="http://www.w3.org/1999/xhtml; charset=utf-8" http-equiv="Content-Type">
-          <link href="stylesheet.css" type="text/css" rel="stylesheet">
+          <link href="stylesheet.css" type="text/css" rel="stylesheet"/>
           <style type="text/css">
               \n\t\t@page {
                   margin-bottom: 5.000000pt;
@@ -89,7 +75,7 @@ class TestAddFunction(unittest.TestCase):
           </div>\n\n<div class="bs1" id="7384">\n<p class="calibre1"></p>
           </div>\n\n<div class="bs" id="7385">\n<span><span class="ts3"> </span></span></div>\n\n<div class="bs1" id="7386">\n
               <p class="calibre1"></p>
-          </div>\n\n<div class="bs7" id="7387">\n<p class="calibre1"><span><img src="10807.jpeg" class="calibre8"></span></p>
+          </div>\n\n<div class="bs7" id="7387">\n<p class="calibre1"><span><img src="10807.jpeg" class="calibre8" /></span></p>
           </div>\n\n<div class="bs1" id="7388">\n<p class="calibre1"></p>
           </div>\n\n<div class="bs" id="7389">\n<span><span class="ts3"> </span></span></div>\n\n<div class="bs1" id="7390">\n
               <p class="calibre1"></p>
@@ -149,7 +135,7 @@ class TestAddFunction(unittest.TestCase):
               class="bs1" id="7428">\n<p class="calibre1"></p>
           </div>\n\n<div class="bs" id="7429">\n<span><span class="ts3"> </span></span></div>\n\n<div class="bs1" id="7430">\n
               <p class="calibre1"></p>
-          </div>\n\n<div class="bs7" id="7431">\n<p class="calibre1"><span><img src="10808.jpeg" class="calibre9"></span></p>
+          </div>\n\n<div class="bs7" id="7431">\n<p class="calibre1"><span><img src="10808.jpeg" class="calibre9" /></span></p>
           </div>\n\n<div class="bs1" id="7432">\n<p class="calibre1"></p>
           </div>\n\n<div class="bs" id="7433">\n<span><span class="ts3"> </span></span></div>\n\n<div class="bs1" id="7434">\n
               <p class="calibre1"></p>
@@ -165,7 +151,7 @@ class TestAddFunction(unittest.TestCase):
               class="bs1" id="7444">\n<p class="calibre1"></p>
           </div>\n\n<div class="bs" id="7445">\n<span><span class="ts3"> </span></span></div>\n\n<div class="bs1" id="7446">\n
               <p class="calibre1"></p>
-          </div>\n\n<div class="bs7" id="7447">\n<p class="calibre1"><span><img src="10809.jpeg" class="calibre10"></span></p>
+          </div>\n\n<div class="bs7" id="7447">\n<p class="calibre1"><span><img src="10809.jpeg" class="calibre10" /></span></p>
           </div>\n\n<div class="bs1" id="7448">\n<p class="calibre1"></p>
           </div>\n\n<div class="bs" id="7449">\n<span><span class="ts3"> </span></span></div>\n\n<div class="bs1" id="7450">\n
               <p class="calibre1"></p>
@@ -182,7 +168,7 @@ class TestAddFunction(unittest.TestCase):
           </div>\n\n<div class="bs1" id="7460">\n<p class="calibre1"></p>
           </div>\n\n<div class="bs" id="7461">\n<span><span class="ts3"> </span></span></div>\n\n<div class="bs1" id="7462">\n
               <p class="calibre1"></p>
-          </div>\n\n<div class="bs7" id="7463">\n<p class="calibre1"><span><img src="10810.jpeg" class="calibre11"></span></p>
+          </div>\n\n<div class="bs7" id="7463">\n<p class="calibre1"><span><img src="10810.jpeg" class="calibre11" /></span></p>
           </div>\n\n<div class="bs1" id="7464">\n<p class="calibre1"></p>
           </div>\n\n<div class="bs" id="7465">\n<span><span class="ts3"> </span></span></div>\n\n<div class="bs1" id="7466">\n
               <p class="calibre1"></p>
@@ -203,7 +189,7 @@ class TestAddFunction(unittest.TestCase):
                       explanation with it.</span></span></div>\n\n<div class="bs1" id="7480">\n<p class="calibre1"></p>
           </div>\n\n<div class="bs" id="7481">\n<span><span class="ts3"> </span></span></div>\n\n<div class="bs1" id="7482">\n
               <p class="calibre1"></p>
-          </div>\n\n<div class="bs7" id="7483">\n<p class="calibre1"><span><img src="10811.jpeg" class="calibre12"></span></p>
+          </div>\n\n<div class="bs7" id="7483">\n<p class="calibre1"><span><img src="10811.jpeg" class="calibre12" /></span></p>
           </div>\n\n<div class="bs1" id="7484">\n<p class="calibre1"></p>
           </div>\n\n<div class="bs" id="7485">\n<span><span class="ts3"> </span></span></div>\n\n<div class="bs1" id="7486">\n
               <p class="calibre1"></p>

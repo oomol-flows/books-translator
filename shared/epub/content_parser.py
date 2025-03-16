@@ -1,8 +1,11 @@
 import os
+import re
 
 from lxml.etree import parse, Element, QName
-from .utils import escape_ascii
+from html import escape
 
+
+# TODO replace with XML
 class Spine:
   def __init__(self, folder_path, base_path, item):
     self._folder_path = folder_path
@@ -104,7 +107,7 @@ class EpubContent:
   def title(self, title: str):
     title_dom = self._get_title()
     if not title_dom is None:
-      title_dom.text = escape_ascii(title)
+      title_dom.text = _escape_ascii(title)
 
   def _get_title(self):
     titles = self._metadata.xpath(
@@ -136,7 +139,7 @@ class EpubContent:
       creator_dom = Element(QName(ns["dc"], "creator"))
       creator_dom.set(QName(ns["opf"], "file-as"), author)
       creator_dom.set(QName(ns["opf"], "role"), "aut")
-      creator_dom.text = escape_ascii(author)
+      creator_dom.text = _escape_ascii(author)
       parent_dom.insert(index_at_parent, creator_dom)
 
     for creator_dom in creator_doms:
@@ -149,3 +152,11 @@ class EpubContent:
         "dc": self._metadata.nsmap.get("dc"),
       },
     )
+
+def _escape_ascii(content: str) -> str:
+  content = escape(content)
+  content = re.sub(
+    r"\\u([\da-fA-F]{4})",
+    lambda x: chr(int(x.group(1), 16)), content,
+  )
+  return content
