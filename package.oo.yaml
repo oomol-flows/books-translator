@@ -13,7 +13,7 @@ scripts:
     python -m spacy download ru_core_news_sm
     python -m spacy download de_core_news_sm
 dependencies:
-  oomol-file: 0.0.7
+  oomol-file: 0.0.9
 name: translate-epub-side-by-side
 version: 0.0.6
 displayName: Translate epub side by side
