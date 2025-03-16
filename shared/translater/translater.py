@@ -18,9 +18,9 @@ class Translater:
   def __init__(
         self,
         group_max_tokens: int,
-        api: LLM_API, 
-        key: str | None, 
-        url: str | None, 
+        api: LLM_API,
+        key: str | None,
+        url: str | None,
         model: str,
         temperature: float,
         timeout: float | None,
@@ -30,7 +30,7 @@ class Translater:
 
     self._streaming: bool = streaming
     self._group: Group = Group(
-      group_max_tokens=group_max_tokens, 
+      group_max_tokens=group_max_tokens,
       interval_max_tokens=math.ceil(float(group_max_tokens) * 0.1),
     )
     self._llm = LLM(
@@ -53,7 +53,7 @@ class Translater:
 
     for index, fragments in enumerate(grouped_fragments):
       fragments = self._translate_fragments(
-        fragments, 
+        fragments,
         report_progress=lambda p: report_progress(
           float(index + p) / float(len(grouped_fragments)),
         ),
@@ -108,7 +108,7 @@ class Translater:
 def _gen_admin_prompt(target_lan: str, source_lan: str) -> str:
   return f"""
 You are a translator and need to translate the user's {source_lan} text into {target_lan}.
-I want you to replace simplified A0-level words and sentences with more beautiful and elegant, upper level {target_lan} words and sentences. Keep the meaning same, but make them more literary. 
+I want you to replace simplified A0-level words and sentences with more beautiful and elegant, upper level {target_lan} words and sentences. Keep the meaning same, but make them more literary.
 I want you to only reply the translation and nothing else, do not write explanations.
 A number and colon are added to the top of each line of text entered by the user. This number is only used to align the translation text for you and has no meaning in itself. You should delete the number in your mind to understand the user's original text.
 Your translation results should be split into a number of lines, the number of lines is equal to the number of lines in the user's original text. The content of each line should correspond to the corresponding line of the user's original text.
