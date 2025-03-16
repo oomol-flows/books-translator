@@ -28,7 +28,7 @@ class TestAddFunction(unittest.TestCase):
 
       <head>\n <title>The little prince</title>\n
           <meta content="http://www.w3.org/1999/xhtml; charset=utf-8" http-equiv="Content-Type">
-          <link href="stylesheet.css" type="text/css" rel="stylesheet">
+          <link href="stylesheet.css" type="text/css" rel="stylesheet"/>
           <style type="text/css">
               \n\t\t@page {
                   margin-bottom: 5.000000pt;
@@ -75,7 +75,7 @@ class TestAddFunction(unittest.TestCase):
           </div>\n\n<div class="bs1" id="7384">\n<p class="calibre1"></p>
           </div>\n\n<div class="bs" id="7385">\n<span><span class="ts3"> </span></span></div>\n\n<div class="bs1" id="7386">\n
               <p class="calibre1"></p>
-          </div>\n\n<div class="bs7" id="7387">\n<p class="calibre1"><span><img src="10807.jpeg" class="calibre8"></span></p>
+          </div>\n\n<div class="bs7" id="7387">\n<p class="calibre1"><span><img src="10807.jpeg" class="calibre8" /></span></p>
           </div>\n\n<div class="bs1" id="7388">\n<p class="calibre1"></p>
           </div>\n\n<div class="bs" id="7389">\n<span><span class="ts3"> </span></span></div>\n\n<div class="bs1" id="7390">\n
               <p class="calibre1"></p>
@@ -135,7 +135,7 @@ class TestAddFunction(unittest.TestCase):
               class="bs1" id="7428">\n<p class="calibre1"></p>
           </div>\n\n<div class="bs" id="7429">\n<span><span class="ts3"> </span></span></div>\n\n<div class="bs1" id="7430">\n
               <p class="calibre1"></p>
-          </div>\n\n<div class="bs7" id="7431">\n<p class="calibre1"><span><img src="10808.jpeg" class="calibre9"></span></p>
+          </div>\n\n<div class="bs7" id="7431">\n<p class="calibre1"><span><img src="10808.jpeg" class="calibre9" /></span></p>
           </div>\n\n<div class="bs1" id="7432">\n<p class="calibre1"></p>
           </div>\n\n<div class="bs" id="7433">\n<span><span class="ts3"> </span></span></div>\n\n<div class="bs1" id="7434">\n
               <p class="calibre1"></p>
@@ -151,7 +151,7 @@ class TestAddFunction(unittest.TestCase):
               class="bs1" id="7444">\n<p class="calibre1"></p>
           </div>\n\n<div class="bs" id="7445">\n<span><span class="ts3"> </span></span></div>\n\n<div class="bs1" id="7446">\n
               <p class="calibre1"></p>
-          </div>\n\n<div class="bs7" id="7447">\n<p class="calibre1"><span><img src="10809.jpeg" class="calibre10"></span></p>
+          </div>\n\n<div class="bs7" id="7447">\n<p class="calibre1"><span><img src="10809.jpeg" class="calibre10" /></span></p>
           </div>\n\n<div class="bs1" id="7448">\n<p class="calibre1"></p>
           </div>\n\n<div class="bs" id="7449">\n<span><span class="ts3"> </span></span></div>\n\n<div class="bs1" id="7450">\n
               <p class="calibre1"></p>
@@ -168,7 +168,7 @@ class TestAddFunction(unittest.TestCase):
           </div>\n\n<div class="bs1" id="7460">\n<p class="calibre1"></p>
           </div>\n\n<div class="bs" id="7461">\n<span><span class="ts3"> </span></span></div>\n\n<div class="bs1" id="7462">\n
               <p class="calibre1"></p>
-          </div>\n\n<div class="bs7" id="7463">\n<p class="calibre1"><span><img src="10810.jpeg" class="calibre11"></span></p>
+          </div>\n\n<div class="bs7" id="7463">\n<p class="calibre1"><span><img src="10810.jpeg" class="calibre11" /></span></p>
           </div>\n\n<div class="bs1" id="7464">\n<p class="calibre1"></p>
           </div>\n\n<div class="bs" id="7465">\n<span><span class="ts3"> </span></span></div>\n\n<div class="bs1" id="7466">\n
               <p class="calibre1"></p>
@@ -189,7 +189,7 @@ class TestAddFunction(unittest.TestCase):
                       explanation with it.</span></span></div>\n\n<div class="bs1" id="7480">\n<p class="calibre1"></p>
           </div>\n\n<div class="bs" id="7481">\n<span><span class="ts3"> </span></span></div>\n\n<div class="bs1" id="7482">\n
               <p class="calibre1"></p>
-          </div>\n\n<div class="bs7" id="7483">\n<p class="calibre1"><span><img src="10811.jpeg" class="calibre12"></span></p>
+          </div>\n\n<div class="bs7" id="7483">\n<p class="calibre1"><span><img src="10811.jpeg" class="calibre12" /></span></p>
           </div>\n\n<div class="bs1" id="7484">\n<p class="calibre1"></p>
           </div>\n\n<div class="bs" id="7485">\n<span><span class="ts3"> </span></span></div>\n\n<div class="bs1" id="7486">\n
               <p class="calibre1"></p>
