@@ -1,42 +1,28 @@
 import unittest
-
-from typing import Optional
-from lxml.etree import fromstring, tostring, HTMLParser
-from shared.epub.text_picker import TextPicker
+from shared.epub import translate_html
 
 class TestAddFunction(unittest.TestCase):
 
   def test_string_logic(self):
-    root_text = "<body>hello<span>the</span>world</body>"
-    root = fromstring(
-      root_text,
-      parser=HTMLParser(recover=True),
+    target = translate_html(
+      translate=lambda texts, _: [t for t in texts],
+      file_content = "<html><body>hello<span>the</span>world</body></html>",
+      report_progress=lambda _: None,
     )
-    body_dom = root.xpath("//body")[0]
-    bin = tostring(body_dom, method="html", encoding="utf-8", pretty_print=False)
-    self.assertEqual(bin.decode("utf-8"), root_text)
-
+    self.assertEqual(
+      first=target,
+      second="<html><body>hello<span>the</span>world</body><body>hellotheworld</body></html>",
+    )
 
   def test_pick_and_replace_content(self):
     # Just a smoke test
-    root = fromstring(
-      self.get_test_xml_content(), 
-      parser=HTMLParser(recover=True),
+    translate_html(
+      translate=lambda texts, _: [""],
+      file_content = self._get_test_xml_content(),
+      report_progress=lambda _: None,
     )
-    picker = TextPicker(root, "text")
-    texts: list[Optional[str]] = []
-    for text in picker.pick_texts():
-      text = text.strip()
-      if text == "":
-        text = None
-      else:
-        if len(text) > 25:
-          text = f"{text[:25]}..."
-        text = text.replace("\n", "")
-        text = f"BEGIN:{text}:END"
-      texts.append(text)
 
-  def get_test_xml_content(self) -> str:
+  def _get_test_xml_content(self) -> str:
     return """
       <html xmlns="http://www.w3.org/1999/xhtml">\n
 

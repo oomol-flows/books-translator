@@ -1,6 +1,5 @@
 from oocana import Context
-from shared.epub import EpubHandler
-from shared.translater import Translater, LLM_API
+from shared.translater import Translater
 from .file import translate_epub_file
 from .llm_parser import parse
 
@@ -22,12 +21,9 @@ def main(params: dict, context: Context):
     group_max_tokens=params["max_translating_group"],
     streaming=True,
   )
-  epub_handler = EpubHandler(
-    translate=translater.translate,
-  )
   zip_data = translate_epub_file(
     context=context,
-    handler=epub_handler,
+    translate=translater.translate,
     file_path=params["file"],
     book_title=params.get("title", None),
   )

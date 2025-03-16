@@ -7,13 +7,13 @@ import shutil
 from typing import Optional
 from lxml.etree import parse
 from oocana import Context
-from shared.epub import EpubHandler, EpubContent
+from shared.epub import translate_html, Translate, EpubContent
 
 
 def translate_epub_file(
     context: Context,
-    handler: EpubHandler, 
-    file_path: str, 
+    translate: Translate,
+    file_path: str,
     book_title: Optional[str]) -> bytes:
 
   unzip_path = tempfile.mkdtemp()
@@ -31,7 +31,7 @@ def translate_epub_file(
 
     _translate_folder(
       context=context,
-      handler=handler,
+      translate=translate,
       path=unzip_path,
       book_title=book_title,
     )
@@ -43,7 +43,7 @@ def translate_epub_file(
           file_path = os.path.join(root, file)
           relative_path = os.path.relpath(file_path, unzip_path)
           zip_file.write(file_path, arcname=relative_path)
-          
+
     in_memory_zip.seek(0)
     zip_data = in_memory_zip.read()
 
@@ -54,8 +54,8 @@ def translate_epub_file(
 
 def _translate_folder(
   context: Context,
-  handler: EpubHandler,
-  path: str, 
+  translate: Translate,
+  path: str,
   book_title: Optional[str],
 ):
   epub_content = EpubContent(path)
@@ -63,13 +63,13 @@ def _translate_folder(
   if book_title is None:
     book_title = epub_content.title
     if not book_title is None:
-      book_title = _link_translated(book_title, handler.translate([book_title], lambda _: None)[0])
+      book_title = _link_translated(book_title, translate([book_title], lambda _: None)[0])
 
   if not book_title is None:
     epub_content.title = book_title
 
   authors = epub_content.authors
-  to_authors = handler.translate(authors, lambda _: None)
+  to_authors = translate(authors, lambda _: None)
 
   for i, author in enumerate(authors):
     authors[i] = _link_translated(author, to_authors[i])
@@ -77,10 +77,10 @@ def _translate_folder(
   epub_content.authors = authors
   epub_content.save()
 
-  _transalte_ncx(epub_content, handler)
-  _translate_spines(context, epub_content, handler)
+  _transalte_ncx(epub_content, translate)
+  _translate_spines(context, epub_content, translate)
 
-def _transalte_ncx(epub_content: EpubContent, handler: EpubHandler):
+def _transalte_ncx(epub_content: EpubContent, translate: Translate):
   ncx_path = epub_content.ncx_path
 
   if ncx_path is not None:
@@ -93,29 +93,29 @@ def _transalte_ncx(epub_content: EpubContent, handler: EpubHandler):
     for text_dom in root.xpath("//ns:text", namespaces=namespaces):
       text_doms.append(text_dom)
       text_list.append(text_dom.text)
-    
-    for index, text in enumerate(handler.translate(text_list, lambda _: None)):
+
+    for index, text in enumerate(translate(text_list, lambda _: None)):
       text_dom = text_doms[index]
       text_dom.text = _link_translated(text_dom.text, text)
 
     tree.write(ncx_path, pretty_print=True)
 
-def _translate_spines(context: Context, epub_content: EpubContent, handler: EpubHandler):
+def _translate_spines(context: Context, epub_content: EpubContent, translate: Translate):
   spines = epub_content.spines
   for index, spine in enumerate(spines):
     if spine.media_type == "application/xhtml+xml":
       file_path = spine.path
       with open(file_path, "r", encoding="utf-8") as file:
-        content = file.read()
-        content = handler.translate_page(
-          page_content=content,
+        content = translate_html(
+          translate=translate,
+          file_content=file.read(),
           report_progress=lambda p: context.report_progress(
             progress=100.0 * (float(index) + p) / float(len(spines)),
           ),
         )
       with open(file_path, "w", encoding="utf-8") as file:
         file.write(content)
-    
+
     context.report_progress(
       progress=100.0 * float(index + 1) / float(len(spines)),
     )
