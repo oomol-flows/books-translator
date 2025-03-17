@@ -22,7 +22,7 @@ def translate_epub_file(
       for member in zip_ref.namelist():
         target_path = os.path.join(unzip_path, member)
         if member.endswith("/"):
-            os.makedirs(target_path, exist_ok=True)
+          os.makedirs(target_path, exist_ok=True)
         else:
           target_dir_path = os.path.dirname(target_path)
           os.makedirs(target_dir_path, exist_ok=True)
@@ -109,8 +109,8 @@ def _translate_spines(context: Context, epub_content: EpubContent, translate: Tr
         content = translate_html(
           translate=translate,
           file_content=file.read(),
-          report_progress=lambda p: context.report_progress(
-            progress=100.0 * (float(index) + p) / float(len(spines)),
+          report_progress=lambda p, i=index: context.report_progress(
+            progress=100.0 * (float(i) + p) / float(len(spines)),
           ),
         )
       with open(file_path, "w", encoding="utf-8") as file:

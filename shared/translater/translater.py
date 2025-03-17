@@ -1,11 +1,10 @@
 import re
-import math
 
 from typing import Callable, Iterable
 from .group import Group, Fragment
 from .llm import LLM, LLM_API
 
-_lan_full_name: dict[str, str] = {
+_LAN_FULL_NAMES: dict[str, str] = {
   "en": "English",
   "cn": "simplified Chinese",
   "ja": "Japanese",
@@ -31,7 +30,7 @@ class Translater:
     self._streaming: bool = streaming
     self._group: Group = Group(
       group_max_tokens=group_max_tokens,
-      interval_max_tokens=math.ceil(float(group_max_tokens) * 0.1),
+      gap_rate=0.1,
     )
     self._llm = LLM(
       api=api,
@@ -47,22 +46,20 @@ class Translater:
     )
 
   def translate(self, source_texts: list[str], report_progress: Callable[[float], None]) -> list[str]:
+    body_fragments: list[Fragment] = []
     target_texts: list[str] = [""] * len(source_texts)
-    grouped_fragments = self._group.split(source_texts)
-    operated_id: int = 0
+    splitted = list(self._group.split(source_texts))
 
-    for index, fragments in enumerate(grouped_fragments):
-      fragments = self._translate_fragments(
-        fragments,
-        report_progress=lambda p: report_progress(
-          float(index + p) / float(len(grouped_fragments)),
+    for i, (head, body, tail) in enumerate(splitted):
+      body_fragments.extend(body)
+      self._translate_fragments(
+        fragments=head + body + tail,
+        report_progress=lambda p, i=i: report_progress(
+          (float(i) + p) / len(splitted),
         ),
       )
-      for fragment in fragments:
-        if operated_id > fragment.id:
-          continue # fragment may be duplicated
-        operated_id = max(operated_id, fragment.id)
-        target_texts[fragment.index] += fragment.target
+    for fragment in body_fragments:
+      target_texts[fragment.index] += fragment.target
 
     return target_texts
 
@@ -100,9 +97,9 @@ class Translater:
         yield re.sub(r"^\d+\:\s*", "", line)
 
   def _lan_full_name(self, name: str) -> str:
-    full_name = _lan_full_name.get(name, None)
+    full_name = _LAN_FULL_NAMES.get(name, None)
     if full_name is None:
-      full_name = _lan_full_name["en"]
+      full_name = _LAN_FULL_NAMES["en"]
     return full_name
 
 def _gen_admin_prompt(target_lan: str, source_lan: str) -> str:
