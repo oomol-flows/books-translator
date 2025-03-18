@@ -16,7 +16,7 @@ def parse(params: dict, context: Context) -> LLMDescription:
     return LLMDescription(
       api=LLM_API.OpenAI,
       key=env["api_key"],
-      url=env["base_url"],
+      url=env["base_url_v1"],
       model=_default(params["model"], env["models"][0]),
     )
   else:
