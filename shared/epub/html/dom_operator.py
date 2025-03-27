@@ -30,12 +30,13 @@ def append_texts(root: Element, texts: Iterable[str | Iterable[str] | None]):
       element.tail = _append_text(element.tail, text)
 
 def _append_dom(parent: Element, origin: Element, text: str):
-  appended = Element(origin.tag, origin.attrib)
+  appended = Element(origin.tag, {**origin.attrib})
   for index, child in enumerate(parent):
     if child == origin:
       parent.insert(index + 1, appended)
       break
 
+  appended.attrib.pop("id", None)
   appended.text = text
   appended.tail = origin.tail
   origin.tail = None
