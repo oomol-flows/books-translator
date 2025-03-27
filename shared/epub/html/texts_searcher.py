@@ -40,6 +40,6 @@ def _is_not_empty_str(text: str | None) -> TypeGuard[str]:
   if text is None:
     return False
   for char in text:
-    if char != " " and char != "\n":
+    if char not in (" ", "\n"):
       return True
   return False
