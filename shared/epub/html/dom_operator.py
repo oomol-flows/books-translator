@@ -11,7 +11,7 @@ def read_texts(root: Element) -> Generator[str, None, None]:
     elif position == TextPosition.TEXT:
       yield cast(str, element.text)
     elif position == TextPosition.TAIL:
-      yield cast(str, element.text)
+      yield cast(str, element.tail)
 
 def append_texts(root: Element, texts: Iterable[str | Iterable[str] | None]):
   zip_list = list(zip(texts, search_texts(root)))
