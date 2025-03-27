@@ -26,13 +26,21 @@ def translate_html(translate: Translate, file_content: str, report_progress: Rep
   if xmlns is not None:
     root_attrib["xmlns"] = xmlns
   root.attrib = root_attrib
-  html_content = tostring(root, encoding="unicode")
-  html_content = to_html(html_content)
+
+  if xmlns is None:
+    file_content = tostring(root, encoding="unicode")
+    file_content = to_html(file_content)
+  else:
+    # XHTML disable <tag/> (we need replace them with <tag></tag>)
+    for element in _all_elements(root):
+      if element.text is None:
+        element.text = ""
+    file_content = tostring(root, encoding="unicode")
 
   if head is not None:
-    html_content = head + html_content
+    file_content = head + file_content
 
-  return html_content
+  return file_content
 
 def _extract_xmlns(root: Element):
   xmlns: str | None = None
