@@ -42,22 +42,21 @@ def translate_html(translate: Translate, file_content: str, report_progress: Rep
 
   return file_content
 
-def _extract_xmlns(root: Element) -> str:
+def _extract_xmlns(root: Element) -> str | None:
   root_xmlns: str | None = None
-  for element in _all_elements(root):
+  for i, element in enumerate(_all_elements(root)):
     need_clean_xmlns = True
     match = re.match(_XMLNS_IN_TAG, element.tag)
 
     if match:
       xmlns = re.sub(_BRACES, "", match.group())
-      if root_xmlns is None:
+      if i == 0:
         root_xmlns = xmlns
       elif root_xmlns != xmlns:
         need_clean_xmlns = False
     if need_clean_xmlns:
       element.tag = re.sub(_XMLNS_IN_TAG, "", element.tag)
 
-  assert root_xmlns is not None
   return root_xmlns
 
 def _all_elements(parent: Element):
