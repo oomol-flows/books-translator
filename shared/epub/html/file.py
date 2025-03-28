@@ -26,22 +26,38 @@ def translate_html(translate: Translate, file_content: str, report_progress: Rep
   if xmlns is not None:
     root_attrib["xmlns"] = xmlns
   root.attrib = root_attrib
-  html_content = tostring(root, encoding="unicode")
-  html_content = to_html(html_content)
+
+  if xmlns is None:
+    file_content = tostring(root, encoding="unicode")
+    file_content = to_html(file_content)
+  else:
+    # XHTML disable <tag/> (we need replace them with <tag></tag>)
+    for element in _all_elements(root):
+      if element.text is None:
+        element.text = ""
+    file_content = tostring(root, encoding="unicode")
 
   if head is not None:
-    html_content = head + html_content
+    file_content = head + file_content
 
-  return html_content
+  return file_content
 
-def _extract_xmlns(root: Element):
-  xmlns: str | None = None
-  for element in _all_elements(root):
+def _extract_xmlns(root: Element) -> str | None:
+  root_xmlns: str | None = None
+  for i, element in enumerate(_all_elements(root)):
+    need_clean_xmlns = True
     match = re.match(_XMLNS_IN_TAG, element.tag)
-    element.tag = re.sub(_XMLNS_IN_TAG, "", element.tag)
+
     if match:
       xmlns = re.sub(_BRACES, "", match.group())
-  return xmlns
+      if i == 0:
+        root_xmlns = xmlns
+      elif root_xmlns != xmlns:
+        need_clean_xmlns = False
+    if need_clean_xmlns:
+      element.tag = re.sub(_XMLNS_IN_TAG, "", element.tag)
+
+  return root_xmlns
 
 def _all_elements(parent: Element):
   yield parent
