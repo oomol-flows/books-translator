@@ -7,6 +7,8 @@ inputs_def:
   - handle: title
     json_schema:
       type: string
+    value:
+    nullable: true
   - handle: max_translating_group
     json_schema:
       type: integer
@@ -51,49 +53,21 @@ inputs_def:
           - Русский
           - Deutsch
     value: cn
-  - handle: llm_api
-    json_schema:
-      enum:
-        - oomol
-        - openai
-        - claude
-        - Gemini
-      ui:options:
-        labels:
-          - OOMOL
-          - OpenAI
-          - Claude
-          - gemini
-    value: oomol
-  - handle: model
-    json_schema:
-      type: string
-      minLength: 1
-    value:
-    nullable: true
-  - handle: url
-    json_schema:
-      type: string
-      minLength: 1
-    value:
-    nullable: true
-  - handle: api_key
-    json_schema:
-      contentMediaType: oomol/secret
-      type: string
-    value:
-    nullable: true
-  - handle: temperature
-    json_schema:
-      type: number
-      minimum: 0
-    value: 0.4
-    nullable: false
   - handle: timeout
     json_schema:
       type: number
       minimum: 0
     value: 0
+  - handle: llm
+    json_schema:
+      ui:options:
+        title: Model
+      ui:widget: llm::model
+    value:
+      model: oomol-chat
+      temperature: 1
+      top_p: 0.8
+      max_tokens: 4096
 outputs_def:
   - handle: binary
     description: Output

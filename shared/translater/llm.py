@@ -16,7 +16,6 @@ class LLM_API(Enum):
 class LLM:
   def __init__(
       self,
-      api: LLM_API,
       key: str | None,
       url: str | None,
       model: str,
