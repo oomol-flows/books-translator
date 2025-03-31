@@ -7,5 +7,3 @@ resource-segmentation==0.0.1
 langchain_core==0.3.25
 langchain_community==0.3.12
 langchain_openai==0.2.12
-langchain_anthropic==0.3.0
-langchain-google-vertexai==2.0.9

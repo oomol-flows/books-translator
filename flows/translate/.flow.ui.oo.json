@@ -7,11 +7,6 @@
           "x": -70.40144628724863,
           "y": 0
         }
-      },
-      "sections": {
-        "inputHandle": {
-          "cardCollapsed": true
-        }
       }
     },
     "binary_to_file#1": {

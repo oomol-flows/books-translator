@@ -2,7 +2,6 @@ from oocana import Context
 from typing import Literal, TypedDict
 from shared.translater import Translater
 from .file import translate_epub_file
-from .llm_parser import parse
 
 
 class LLMModelOptions(TypedDict):
