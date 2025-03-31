@@ -16,7 +16,7 @@ nodes:
         value: 0
       - handle: llm
         value:
-          model: oomol-chat
+          model: deepseek-chat
           temperature: 1
           top_p: 0.8
           max_tokens: 4096
