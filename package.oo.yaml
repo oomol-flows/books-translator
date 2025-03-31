@@ -13,10 +13,10 @@ scripts:
     python -m spacy download ru_core_news_sm
     python -m spacy download de_core_news_sm
 dependencies:
-  oomol-file: 0.0.9
+  oomol-file: 0.0.10
 name: translate-epub-side-by-side
-version: 0.0.9
+version: 0.1.0
 displayName: Translate epub side by side
 description: Translate the epub book using LLM side by side.
-releaseNotes: fix bugs.
+releaseNotes: replace with LLM filed.
 repository: https://github.com/oomol-flows/books-translater

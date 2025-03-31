@@ -3,9 +3,7 @@ from io import StringIO
 from enum import Enum
 from pydantic import SecretStr
 from langchain_core.messages import SystemMessage, HumanMessage, BaseMessageChunk
-from langchain_anthropic import ChatAnthropic
 from langchain_openai import ChatOpenAI
-from langchain_google_vertexai import ChatVertexAI
 
 
 class LLM_API(Enum):
@@ -16,39 +14,19 @@ class LLM_API(Enum):
 class LLM:
   def __init__(
       self,
-      api: LLM_API,
       key: str | None,
       url: str | None,
       model: str,
       temperature: float,
       timeout: float | None,
     ) -> None:
-    self._model: ChatAnthropic | ChatOpenAI | ChatVertexAI
     self._timeout: float | None = timeout
-
-    if api == LLM_API.OpenAI:
-      self._model = ChatOpenAI(
-        api_key=cast(SecretStr, key),
-        base_url=url,
-        model=model,
-        temperature=temperature,
-      )
-    elif api == LLM_API.Claude:
-      self._model = ChatAnthropic(
-        api_key=cast(SecretStr, key),
-        model_name=model,
-        base_url=url,
-        timeout=timeout,
-        stop=None,
-        temperature=temperature,
-      )
-    elif api == LLM_API.Gemini:
-      self._model = ChatVertexAI(
-        model=model,
-        base_url=url,
-        timeout=timeout,
-        temperature=temperature,
-      )
+    self._model: ChatOpenAI = ChatOpenAI(
+      api_key=cast(SecretStr, key),
+      base_url=url,
+      model=model,
+      temperature=temperature,
+    )
 
   def invoke(self, system: str, human: str) -> str:
     resp = self._model.invoke(

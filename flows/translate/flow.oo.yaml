@@ -5,24 +5,21 @@ nodes:
     inputs_from:
       - handle: file
       - handle: title
+        value:
       - handle: max_translating_group
         value: 1000
       - handle: source
         value: en
       - handle: target
         value: cn
-      - handle: llm_api
-        value: oomol
-      - handle: model
-        value:
-      - handle: url
-        value:
-      - handle: api_key
-        value:
-      - handle: temperature
-        value: 0.4
       - handle: timeout
         value: 0
+      - handle: llm
+        value:
+          model: deepseek-chat
+          temperature: 1
+          top_p: 0.8
+          max_tokens: 4096
   - task: oomol-file::binary_to_file
     title: "Binary to file #1"
     node_id: binary_to_file#1
