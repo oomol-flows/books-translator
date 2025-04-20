@@ -7,7 +7,7 @@ nodes:
       - handle: title
         value:
       - handle: max_translating_group
-        value: 1000
+        value: 2500
       - handle: source
         value: en
       - handle: target

@@ -48,4 +48,5 @@ class CacheTranslater:
     for text in texts:
       data = text.encode(encoding="utf-8")
       hash.update(data)
+      hash.update(b"\x03") # ETX means string's end
     return hash.hexdigest()
