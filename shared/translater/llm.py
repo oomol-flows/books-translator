@@ -6,11 +6,6 @@ from langchain_core.messages import SystemMessage, HumanMessage, BaseMessageChun
 from langchain_openai import ChatOpenAI
 
 
-class LLM_API(Enum):
-  OpenAI = 1,
-  Claude = 2,
-  Gemini = 3,
-
 class LLM:
   def __init__(
       self,
