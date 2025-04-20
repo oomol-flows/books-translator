@@ -35,7 +35,11 @@ class CacheTranslater:
     else:
       translated_texts = self._translate(source_texts, report_progress)
       with open(cache_file_path, "w", encoding="utf-8") as cache_file:
-        cache_file.write(dumps(translated_texts))
+        cache_file.write(dumps(
+          obj=translated_texts,
+          ensure_ascii=False,
+          indent=2,
+        ))
 
     return translated_texts
 
