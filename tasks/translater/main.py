@@ -2,6 +2,7 @@ from oocana import Context
 from typing import Literal, TypedDict
 from shared.translater import Translater
 from .file import translate_epub_file
+from .cache import CacheTranslater
 
 
 class LLMModelOptions(TypedDict):
@@ -37,9 +38,13 @@ def main(params: Input, context: Context):
     group_max_tokens=params["max_translating_group"],
     streaming=True,
   )
-  zip_data = translate_epub_file(
+  cache = CacheTranslater(
     context=context,
     translate=translater.translate,
+  )
+  zip_data = translate_epub_file(
+    context=context,
+    translate=cache.translate,
     file_path=params["file"],
     book_title=params.get("title", None),
   )
