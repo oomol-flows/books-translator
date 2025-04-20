@@ -1,8 +1,13 @@
 import re
+import os
 
 from typing import Callable, Iterable
+from hashlib import sha256
+
 from .group import Group, Fragment
-from .llm import LLM, LLM_API
+from json import loads, dumps
+from .llm import LLM
+
 
 _LAN_FULL_NAMES: dict[str, str] = {
   "en": "English",
@@ -17,6 +22,7 @@ class Translater:
   def __init__(
         self,
         group_max_tokens: int,
+        cache_path: str,
         key: str | None,
         url: str | None,
         model: str,
@@ -31,6 +37,7 @@ class Translater:
       group_max_tokens=group_max_tokens,
       gap_rate=0.1,
     )
+    self._cache_path: str = cache_path
     self._llm = LLM(
       key=key,
       url=url,
@@ -82,23 +89,50 @@ class Translater:
     return fragments
 
   def _translate_text_by_text(self, texts: list[str]):
-    system=self._admin_prompt
-    human="\n".join([f"{i+1}: {t}" for i, t in enumerate(texts)])
-    iter_lines: Iterable[str]
-    if self._streaming:
-      iter_lines = self._llm.invoke_response_lines(system, human)
+    hash = self._to_hash(texts)
+    cache_file_path = os.path.join(self._cache_path, f"{hash}.json")
+    if os.path.exists(cache_file_path):
+      with open(cache_file_path, "r", encoding="utf-8") as cache_file:
+        for translated_text in loads(cache_file.read()):
+          yield translated_text
     else:
-      iter_lines = self._llm.invoke(system, human).split("\n")
-    for line in iter_lines:
-      match = re.search(r"^\d+\:", line)
-      if match:
-        yield re.sub(r"^\d+\:\s*", "", line)
+      system=self._admin_prompt
+      human="\n".join([f"{i+1}: {t}" for i, t in enumerate(texts)])
+      translated_texts: list[str] = []
+      iter_lines: Iterable[str]
+
+      if self._streaming:
+        iter_lines = self._llm.invoke_response_lines(system, human)
+      else:
+        iter_lines = self._llm.invoke(system, human).split("\n")
+      for line in iter_lines:
+        match = re.search(r"^\d+\:", line)
+        if match:
+          translated_text = re.sub(r"^\d+\:\s*", "", line)
+          yield translated_text
+          translated_texts.append(translated_text)
+
+      with open(cache_file_path, "w", encoding="utf-8") as cache_file:
+        cache_file.write(dumps(
+          obj=translated_texts,
+          ensure_ascii=False,
+          indent=2,
+        ))
+
 
   def _lan_full_name(self, name: str) -> str:
     full_name = _LAN_FULL_NAMES.get(name, None)
     if full_name is None:
       full_name = _LAN_FULL_NAMES["en"]
     return full_name
+
+  def _to_hash(self, texts: list[str]) -> str:
+    hash = sha256()
+    for text in texts:
+      data = text.encode(encoding="utf-8")
+      hash.update(data)
+      hash.update(b"\x03") # ETX means string's end
+    return hash.hexdigest()
 
 def _gen_admin_prompt(target_lan: str, source_lan: str) -> str:
   return f"""

@@ -1,8 +1,9 @@
+import os
+
 from oocana import Context
 from typing import Literal, TypedDict
 from shared.translater import Translater
 from .file import translate_epub_file
-from .cache import CacheTranslater
 
 
 class LLMModelOptions(TypedDict):
@@ -27,6 +28,9 @@ def main(params: Input, context: Context):
   if timeout == 0.0:
     timeout = None
 
+  cache_path: str = os.path.join(context.tmp_pkg_dir, "translater_cache")
+  os.makedirs(cache_path, exist_ok=True)
+
   translater = Translater(
     key=llm_env["api_key"],
     url=llm_env["base_url_v1"],
@@ -36,15 +40,12 @@ def main(params: Input, context: Context):
     source_lan=params["source"],
     target_lan=params["target"],
     group_max_tokens=params["max_translating_group"],
+    cache_path=cache_path,
     streaming=True,
-  )
-  cache = CacheTranslater(
-    context=context,
-    translate=translater.translate,
   )
   zip_data = translate_epub_file(
     context=context,
-    translate=cache.translate,
+    translate=translater.translate,
     file_path=params["file"],
     book_title=params.get("title", None),
   )
