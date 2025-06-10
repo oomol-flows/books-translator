@@ -1,0 +1,24 @@
+[project]
+name = "books-translater"
+version = "0.1.0"
+description = ""
+authors = [
+    {name = "TaoZeyu",email = "i@taozeyu.com"}
+]
+readme = "README.md"
+requires-python = ">=3.10,<3.13"
+dependencies = [
+    "tqdm (==4.66.5)",
+    "lxml (==5.3.0)",
+    "tiktoken (==0.8.0)",
+    "langid (==1.1.6)",
+    "spacy (==3.8.3)",
+    "resource-segmentation (==0.0.1)",
+    "langchain (==0.3.23)",
+    "langchain-openai (==0.3.13)"
+]
+
+
+[build-system]
+requires = ["poetry-core>=2.0.0,<3.0.0"]
+build-backend = "poetry.core.masonry.api"

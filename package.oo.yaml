@@ -5,8 +5,7 @@ scripts:
   bootstrap: |
     set -e
     sudo apt-get update
-    pip install --upgrade pip
-    BLIS_ARCH="generic" pip install -r requirements.txt
+    poetry install --no-root
     python -m spacy download en_core_web_sm
     python -m spacy download zh_core_web_sm
     python -m spacy download fr_core_news_sm
