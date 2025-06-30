@@ -16,7 +16,7 @@ scripts:
     pip install "ru_core_news_sm @ $hf_endpoint/spacy/ru_core_news_sm/resolve/main/ru_core_news_sm-any-py3-none-any.whl"
     pip install "de_core_news_sm @ $hf_endpoint/spacy/de_core_news_sm/resolve/main/de_core_news_sm-any-py3-none-any.whl"
 dependencies:
-  oomol-file: 0.0.10
+  oomol-file: 0.0.13
 name: translate-epub-side-by-side
 version: 0.1.2
 displayName: Translate epub side by side
