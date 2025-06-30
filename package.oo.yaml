@@ -4,13 +4,17 @@ scripts:
   # eg: bootstrap: pip install pandas
   bootstrap: |
     set -e
-    sudo apt-get update
     poetry install --no-root
-    python -m spacy download en_core_web_sm
-    python -m spacy download zh_core_web_sm
-    python -m spacy download fr_core_news_sm
-    python -m spacy download ru_core_news_sm
-    python -m spacy download de_core_news_sm
+    hf_endpoint=$HF_ENDPOINT
+    if [ -z "$hf_endpoint" ]; then
+      echo "HF_ENDPOINT is not set, using default endpoint."
+      hf_endpoint="https://huggingface.co"
+    fi
+    pip install "en_core_web_sm @ $hf_endpoint/spacy/en_core_web_sm/resolve/main/en_core_web_sm-any-py3-none-any.whl"
+    pip install "zh_core_web_sm @ $hf_endpoint/spacy/zh_core_web_sm/resolve/main/zh_core_web_sm-any-py3-none-any.whl"
+    pip install "fr_core_news_sm @ $hf_endpoint/spacy/fr_core_news_sm/resolve/main/fr_core_news_sm-any-py3-none-any.whl"
+    pip install "ru_core_news_sm @ $hf_endpoint/spacy/ru_core_news_sm/resolve/main/ru_core_news_sm-any-py3-none-any.whl"
+    pip install "de_core_news_sm @ $hf_endpoint/spacy/de_core_news_sm/resolve/main/de_core_news_sm-any-py3-none-any.whl"
 dependencies:
   oomol-file: 0.0.10
 name: translate-epub-side-by-side
