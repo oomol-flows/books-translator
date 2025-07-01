@@ -1,4 +1,4 @@
-icon: ":twemoji:orange-book:currentColor:"
+icon: "./icon.png"
 scripts:
   # Script executed when the container is first loaded
   # eg: bootstrap: pip install pandas
@@ -17,9 +17,9 @@ scripts:
     pip install "de_core_news_sm @ $hf_endpoint/spacy/de_core_news_sm/resolve/main/de_core_news_sm-any-py3-none-any.whl"
 dependencies:
   oomol-file: 0.0.13
-name: translate-epub-side-by-side
-version: 0.1.3
-displayName: Translate epub side by side
+name: books-translator
+version: 0.1.4
+displayName: Books Translator
 description: Translate the epub book using LLM side by side.
-releaseNotes: downloading spacy from huggingface.
+releaseNotes: update epub block & update logo
 repository: https://github.com/oomol-flows/books-translater
