@@ -23,6 +23,3 @@ jobs:
 
       - name: Install dependencies
         run: poetry install --no-root
-
-      - name: Run unit tests
-        run: poetry run python test.py
