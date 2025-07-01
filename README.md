@@ -1,4 +1,4 @@
-# books translater
+# books translator
 
 Translate the epub book using LLM. The translated book will retain the original text and list the translated text side by side with the original text.
 
