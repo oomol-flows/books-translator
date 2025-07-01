@@ -4,6 +4,12 @@ inputs_def:
     json_schema:
       type: string
       ui:widget: file
+      ui:options:
+        excludeAll: true
+        filters:
+          - name: epub
+            extensions:
+              - epub
   - handle: title
     json_schema:
       type: string
@@ -73,7 +79,7 @@ outputs_def:
     description: Output
     json_schema:
       contentMediaType: oomol/bin
-icon: ":twemoji:orange-book:"
+icon: ":carbon:book:"
 ui:
   default_width: 478
 executor:
