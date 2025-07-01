@@ -18,7 +18,7 @@ scripts:
 dependencies:
   oomol-file: 0.0.13
 name: books-translator
-version: 0.1.4
+version: 0.1.5
 displayName: Books Translator
 description: Translate the epub book using LLM side by side.
 releaseNotes: update epub block & update logo
