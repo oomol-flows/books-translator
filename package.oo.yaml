@@ -8,8 +8,8 @@ scripts:
 dependencies:
   {}
 name: books-translator
-version: 0.1.6
+version: 0.1.7
 displayName: Books Translator
 description: Translate the epub book using LLM side by side.
-releaseNotes: rename project & migrate logic codes into dependencies.
+releaseNotes: update translator block's fields.
 repository: https://github.com/oomol-flows/books-translater
