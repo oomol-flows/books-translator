@@ -1,4 +1,5 @@
-import os
+import hashlib
+import shutil
 
 from pathlib import Path
 from oocana import Context
@@ -23,12 +24,15 @@ class Outputs(typing.TypedDict):
 #endregion
 
 def main(params: Inputs, context: Context) -> Outputs:
-  base_path = Path(context.session_dir) / "books-translator"
+  source_file = Path(params["source_file"])
   translated_file = params["translated_file"]
   if translated_file is None:
-    translated_file = base_path / "output" / f"{context.job_id}.epub"
+    translated_file = Path(context.session_dir) / "books-translator" / f"{context.job_id}.epub"
   else:
     translated_file = Path(translated_file)
+
+  logs_dir_path = Path(context.tmp_pkg_dir) / "logs"
+  logs_dir_path.mkdir(parents=True, exist_ok=True)
 
   env = context.oomol_llm_env
   model = params["model"]
@@ -41,14 +45,15 @@ def main(params: Inputs, context: Context) -> Outputs:
     token_encoding="o200k_base",
     retry_times=int(params["retry_times"]),
     retry_interval_seconds=params["retry_interval_seconds"],
+    log_dir_path=logs_dir_path,
   )
   translate(
     llm=llm,
-    source_path=Path(params["source_file"]),
+    source_path=source_file,
     translated_path=translated_file,
     target_language=_parse_language_code(params["language"]),
     user_prompt=params["prompt"],
-    working_path=base_path / "workspace",
+    working_path=_prepare_workspace_path(source_file, context),
     max_chunk_tokens_count=params["max_chunk_tokens"],
     max_threads_count=params["threads"],
     report_progress=lambda p: context.report_progress(100.0 * p),
@@ -56,6 +61,25 @@ def main(params: Inputs, context: Context) -> Outputs:
   return {
     "translated_file": str(translated_file)
   }
+
+def _prepare_workspace_path(source_file: Path, context: Context):
+  st_mtime = source_file.stat().st_mtime
+  hash = hashlib.new(name="sha512")
+  hash.update(f"{st_mtime}:{source_file}".encode("utf-8"))
+  hash_hex = hash.hexdigest()
+  pkg_path = Path(context.tmp_pkg_dir)
+  workspace_path = pkg_path / hash_hex
+
+  if not workspace_path.exists() or not workspace_path.is_dir():
+    if pkg_path.exists():
+      for file in pkg_path.iterdir():
+        if file.is_file():
+          file.unlink()
+        elif file.is_dir():
+          shutil.rmtree(file)
+    workspace_path.mkdir(parents=True, exist_ok=True)
+
+  return workspace_path
 
 def _parse_language_code(lang_code: str) -> Language:
   if lang_code == "zh-Hans" or lang_code == "zh-CN":
