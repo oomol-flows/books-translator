@@ -19,7 +19,7 @@
         }
       },
       "title": "主要字段",
-      "content": "> 大多数情况，你只需要配置这三个字段就可完整运行。\n- `source_file`: 要翻译的 EPUB 原文件\n- `translated_file`: 翻译后的 EPUB 文件保存位置，若不填，则保存在 `session_dir` 中。\n- `language`: 翻译后的目标语言"
+      "content": "> 大多数情况，你只需要配置这三个字段就可完整运行。\n- `source_file`: 要翻译的 EPUB 原文件\n- `translated_file`: 翻译后的 EPUB 文件保存位置(若不填，则保存在 `session_dir` 中)\n- `language`: 翻译后的目标语言"
     },
     "+comment-1751874833250": {
       "contentWidth": 350,
@@ -52,7 +52,7 @@
         }
       },
       "title": "额外字段",
-      "content": "> 下列字段若不想了解，保留原始值即可。\n- `max_chunk_tokens`: 翻译分段时，限制每段的最大 tokens 数。由于 LLM 的特性，不可能将整本书一次性输入大语言模型来翻译。因此，会将书籍分段提交给 LLM。这个参数用于限制每一段的最大长度（单位是 token）。\n- `threads`: 并发发起翻译请求。如果你觉得翻译过慢，可以将这个值调高。但建议不要超过 16 路并发，会出发 LLM 供应商的限流策略。\n- `retry_times`: 同一分段连续失败多少次之后，才宣布失败。\n- `retry_interval_seconds`: 重试失败后，间隔多少秒后再次重试。"
+      "content": "> 下列字段若不想了解，保留原始值即可。\n- `max_chunk_tokens`: 翻译分段时，限制每段的最大 tokens 数。由于 LLM 的特性，不可能将整本书一次性输入大语言模型来翻译。因此，会将书籍分段提交给 LLM。这个参数用于限制每一段的最大长度（单位是 token）。\n- `threads`: 并发发起翻译请求。如果你觉得翻译过慢，可以将这个值调高。但建议不要超过 16 路并发，会触发 LLM 供应商的限流策略。\n- `retry_times`: 同一分段连续失败多少次之后，才宣布失败。\n- `retry_interval_seconds`: 重试失败后，间隔多少秒后再次重试。"
     },
     "+comment-1751875472639": {
       "contentWidth": 350,
