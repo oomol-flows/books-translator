@@ -8,8 +8,8 @@ scripts:
 dependencies:
   {}
 name: books-translator
-version: 0.1.7
+version: 0.1.8
 displayName: Books Translator
 description: Translate the epub book using LLM side by side.
-releaseNotes: update translator block's fields.
+releaseNotes: "fix: will clean all files in working directory"
 repository: https://github.com/oomol-flows/books-translater

@@ -31,8 +31,8 @@ def main(params: Inputs, context: Context) -> Outputs:
   else:
     translated_file = Path(translated_file)
 
+  working_path = _prepare_working_path(source_file, context)
   logs_dir_path = Path(context.tmp_pkg_dir) / "logs"
-  logs_dir_path.mkdir(parents=True, exist_ok=True)
 
   env = context.oomol_llm_env
   model = params["model"]
@@ -53,7 +53,7 @@ def main(params: Inputs, context: Context) -> Outputs:
     translated_path=translated_file,
     target_language=_parse_language_code(params["language"]),
     user_prompt=params["prompt"],
-    working_path=_prepare_workspace_path(source_file, context),
+    working_path=working_path,
     max_chunk_tokens_count=params["max_chunk_tokens"],
     max_threads_count=params["threads"],
     report_progress=lambda p: context.report_progress(100.0 * p),
@@ -62,24 +62,24 @@ def main(params: Inputs, context: Context) -> Outputs:
     "translated_file": str(translated_file)
   }
 
-def _prepare_workspace_path(source_file: Path, context: Context):
+def _prepare_working_path(source_file: Path, context: Context) -> Path:
   st_mtime = source_file.stat().st_mtime
   hash = hashlib.new(name="sha512")
   hash.update(f"{st_mtime}:{source_file}".encode("utf-8"))
   hash_hex = hash.hexdigest()
   pkg_path = Path(context.tmp_pkg_dir)
-  workspace_path = pkg_path / hash_hex
+  working_path = pkg_path / hash_hex
 
-  if not workspace_path.exists() or not workspace_path.is_dir():
+  if not working_path.exists() or not working_path.is_dir():
     if pkg_path.exists():
       for file in pkg_path.iterdir():
         if file.is_file():
           file.unlink()
         elif file.is_dir():
           shutil.rmtree(file)
-    workspace_path.mkdir(parents=True, exist_ok=True)
+    working_path.mkdir(parents=True, exist_ok=True)
 
-  return workspace_path
+  return working_path
 
 def _parse_language_code(lang_code: str) -> Language:
   if lang_code == "zh-Hans" or lang_code == "zh-CN":
