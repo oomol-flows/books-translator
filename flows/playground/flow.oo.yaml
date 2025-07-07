@@ -1,6 +1,6 @@
 nodes:
   - node_id: translator#4
-    title: "Translate a book #4"
+    title: "Translate a book #1"
     inputs_from:
       - handle: model
         value:
@@ -24,3 +24,4 @@ nodes:
       - handle: retry_interval_seconds
         value: 6.5
     task: self::translator
+title: Playground
