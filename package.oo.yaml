@@ -6,7 +6,7 @@ scripts:
     set -e
     poetry install --no-root
 dependencies:
-  oomol-file: 0.0.13
+  {}
 name: books-translator
 version: 0.1.6
 displayName: Books Translator
