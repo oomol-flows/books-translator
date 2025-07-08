@@ -28,6 +28,7 @@ def main(params: Inputs, context: Context) -> Outputs:
   translated_file = params["translated_file"]
   if translated_file is None:
     translated_file = Path(context.session_dir) / "books-translator" / f"{context.job_id}.epub"
+    translated_file.parent.mkdir(parents=True, exist_ok=True)
   else:
     translated_file = Path(translated_file)
 
@@ -82,27 +83,7 @@ def _prepare_working_path(source_file: Path, context: Context) -> Path:
   return working_path
 
 def _parse_language_code(lang_code: str) -> Language:
-  if lang_code == "zh-Hans" or lang_code == "zh-CN":
-    return Language.SIMPLIFIED_CHINESE
-  elif lang_code == "zh-Hant" or lang_code == "zh-TW":
-    return Language.TRADITIONAL_CHINESE
-  elif lang_code.startswith("en"):
-    return Language.ENGLISH
-  elif lang_code.startswith("fr"):
-    return Language.FRENCH
-  elif lang_code.startswith("de"):
-    return Language.GERMAN
-  elif lang_code.startswith("es"):
-    return Language.SPANISH
-  elif lang_code.startswith("ru"):
-    return Language.RUSSIAN
-  elif lang_code.startswith("it"):
-    return Language.ITALIAN
-  elif lang_code.startswith("pt"):
-    return Language.PORTUGUESE
-  elif lang_code.startswith("ja"):
-    return Language.JAPANESE
-  elif lang_code.startswith("ko"):
-    return Language.KOREAN
-  else:
-    raise ValueError(f"Unsupported language code: {lang_code}")
+  for language in Language:
+    if language.value == lang_code:
+      return language
+  raise ValueError(f"Unsupported language code: {lang_code}")
