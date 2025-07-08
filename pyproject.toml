@@ -9,7 +9,7 @@ readme = "README.md"
 requires-python = ">=3.10,<3.13"
 dependencies = [
     "requests (>=2.32.4,<3.0.0)",
-    "epub-translator (==0.0.4)",
+    "epub-translator (==0.0.5)",
 ]
 
 
