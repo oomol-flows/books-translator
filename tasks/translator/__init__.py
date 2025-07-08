@@ -28,6 +28,7 @@ def main(params: Inputs, context: Context) -> Outputs:
   translated_file = params["translated_file"]
   if translated_file is None:
     translated_file = Path(context.session_dir) / "books-translator" / f"{context.job_id}.epub"
+    translated_file.parent.mkdir(parents=True, exist_ok=True)
   else:
     translated_file = Path(translated_file)
 
