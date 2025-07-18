@@ -72,7 +72,7 @@ inputs_def:
   - handle: max_chunk_tokens
     json_schema:
       type: integer
-    value: 3000
+    value: 2048
   - handle: threads
     json_schema:
       type: integer
