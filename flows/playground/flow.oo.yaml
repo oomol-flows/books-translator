@@ -16,7 +16,7 @@ nodes:
       - handle: prompt
         value: null
       - handle: max_chunk_tokens
-        value: 3000
+        value: 2048
       - handle: threads
         value: 1
       - handle: retry_times
