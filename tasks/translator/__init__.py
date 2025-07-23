@@ -10,7 +10,6 @@ from epub_translator import translate, LLM, Language
 import typing
 from oocana import LLMModelOptions
 class Inputs(typing.TypedDict):
-  model: LLMModelOptions
   source_file: str
   translated_file: str | None
   language: typing.Literal["zh-Hans", "zh-Hant", "en", "fr", "de", "es", "ru", "it", "pt", "ja", "ko"]
@@ -19,6 +18,7 @@ class Inputs(typing.TypedDict):
   threads: int
   retry_times: int
   retry_interval_seconds: float
+  model: LLMModelOptions
 class Outputs(typing.TypedDict):
   translated_file: str
 #endregion
