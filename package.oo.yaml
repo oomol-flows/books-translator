@@ -8,8 +8,8 @@ scripts:
 dependencies:
   {}
 name: books-translator
-version: 0.1.9
+version: 0.1.10
 displayName: Books Translator
 description: Translate the epub book using LLM side by side.
-releaseNotes: "fix: crash because of float field"
+releaseNotes: add groups & descriptions
 repository: https://github.com/oomol-flows/books-translater
