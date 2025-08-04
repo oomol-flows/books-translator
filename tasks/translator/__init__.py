@@ -3,7 +3,7 @@ import shutil
 
 from pathlib import Path
 from oocana import Context
-from epub_translator import translate, LLM, Language
+from epub_translator import translate, LLM, Language, TranslatedWriteMode
 
 
 #region generated meta
@@ -13,6 +13,7 @@ class Inputs(typing.TypedDict):
   source_file: str
   translated_file: str | None
   language: typing.Literal["zh-Hans", "zh-Hant", "en", "fr", "de", "es", "ru", "it", "pt", "ja", "ko"]
+  write_mode: typing.Literal["append", "replace"]
   prompt: str | None
   max_chunk_tokens: int
   threads: int
@@ -55,6 +56,7 @@ def main(params: Inputs, context: Context) -> Outputs:
     target_language=_parse_language_code(params["language"]),
     user_prompt=params["prompt"],
     working_path=working_path,
+    write_mode=_transform_write_mode(params["write_mode"]),
     max_chunk_tokens_count=params["max_chunk_tokens"],
     max_threads_count=params["threads"],
     report_progress=lambda p: context.report_progress(100.0 * p),
@@ -62,6 +64,14 @@ def main(params: Inputs, context: Context) -> Outputs:
   return {
     "translated_file": str(translated_file)
   }
+
+def _transform_write_mode(write_mode: str) -> TranslatedWriteMode:
+  if write_mode == "append":
+    return TranslatedWriteMode.APPEND
+  elif write_mode == "replace":
+    return TranslatedWriteMode.REPLACE
+  else:
+    raise ValueError(f"Invalid write mode: {write_mode}")
 
 def _prepare_working_path(source_file: Path, context: Context) -> Path:
   st_mtime = source_file.stat().st_mtime
