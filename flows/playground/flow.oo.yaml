@@ -23,5 +23,7 @@ nodes:
         value: 5
       - handle: retry_interval_seconds
         value: 6.5
+      - handle: write_mode
+        value: append
     task: self::translator
 title: Playground
