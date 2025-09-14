@@ -1,0 +1,4 @@
+{
+  "translate-the-epub-book-using-llm-side-by-side": "使用大语言模型（LLM）翻译EPUB电子书。翻译后的书籍将保留原文，并在原文旁边显示译文。",
+  "books-translator": "图书翻译"
+}

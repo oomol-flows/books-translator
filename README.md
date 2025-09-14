@@ -1,32 +1,32 @@
-# books translator
+# Books Translator
 
-使用 LLM 翻译 epub 电子书。翻译后的书将保留原文，并将译文与原文并列列出。
+Use LLM to translate EPUB e-books. The translated book will retain the original text and display the translation alongside the original text.
 
-## 主要字段
+## Main Fields
 
-大多数情况，你只需要配置这三个字段就可完整运行。
+In most cases, you only need to configure these three fields to run completely.
 
-- `source_file`: 要翻译的 EPUB 原文件
-- `translated_file`: 翻译后的 EPUB 文件保存位置，若不填，则保存在 `session_dir` 中。
-- `language`: 翻译后的目标语言
+- `source_file`: The original EPUB file to be translated
+- `translated_file`: Save location for the translated EPUB file. If not specified, it will be saved in `session_dir`.
+- `language`: Target language for translation
 
-## 自定义提示词
+## Custom Prompts
 
-`prompt` 可填入提示词，以为 LLM 翻译书籍提供必要信息。例如，你可以将术语表和人物名称规范填入其中。用自然语言描述告知 LLM 即可。
+You can fill in prompts in the `prompt` field to provide necessary information for LLM book translation. For example, you can include glossaries and character name conventions. Just describe it to the LLM in natural language.
 
-## 额外字段
+## Additional Fields
 
-下列字段若不想了解，保留原始值即可。
+If you don't want to understand the following fields, just keep their original values.
 
-- `max_chunk_tokens`: 翻译分段时，限制每段的最大 tokens 数。由于 LLM 的特性，不可能将整本书一次性输入大语言模型来翻译。因此，会将书籍分段提交给 LLM。这个参数用于限制每一段的最大长度（单位是 token）。
-- `threads`: 并发发起翻译请求。如果你觉得翻译过慢，可以将这个值调高。但建议不要超过 16 路并发，会触发 LLM 供应商的限流策略。
-- `retry_times`: 同一分段连续失败多少次之后，才宣布失败。
-- `retry_interval_seconds`: 重试失败后，间隔多少秒后再次重试。
+- `max_chunk_tokens`: When segmenting for translation, limit the maximum number of tokens per segment. Due to the characteristics of LLM, it's impossible to input an entire book into a large language model for translation at once. Therefore, the book will be segmented and submitted to the LLM. This parameter is used to limit the maximum length of each segment (in tokens).
+- `threads`: Concurrent translation requests. If you feel the translation is too slow, you can increase this value. However, it's recommended not to exceed 16 concurrent requests, as it will trigger rate limiting policies from LLM providers.
+- `retry_times`: How many consecutive failures of the same segment before declaring failure.
+- `retry_interval_seconds`: How many seconds to wait before retrying after a failed attempt.
 
-## 输出字段
+## Output Fields
 
-`translated_file` 翻译后的文件保存路径。
+`translated_file` - The file path where the translated file is saved.
 
-## 中断续译
+## Resume Translation
 
-翻译同一本书时，如果主动中断或因为网络原因中断后，已翻译的进度不会丢失。继续点运行后，可以从上一次翻译的进度继续翻译。
+When translating the same book, if you actively interrupt or are interrupted due to network issues, the translated progress will not be lost. After continuing to run, you can resume translation from where you left off last time.
