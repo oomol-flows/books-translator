@@ -1,4 +1,6 @@
 {
   "translate-the-epub-book-using-llm-side-by-side": "Use LLM to translate EPUB e-books. The translated book will retain the original text and display the translation alongside the original text.",
-  "books-translator": "Books Translator"
+  "books-translator": "Books Translator",
+  "books-translator1": "Books Translator",
+  "use-llm-to-translate-epub-e-books-the-translated-book-will-retai": "Use LLM to translate EPUB e-books. The translated book will retain the original text and display the translation alongside the original text."
 }
