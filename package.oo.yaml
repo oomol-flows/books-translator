@@ -8,8 +8,8 @@ scripts:
 dependencies:
   {}
 name: books-translator
-version: 0.1.14
-displayName: "%books-translator%"
-description: "%translate-the-epub-book-using-llm-side-by-side%"
+version: 0.1.15
+displayName: "%books-translator1%"
+description: "%use-llm-to-translate-epub-e-books-the-translated-book-will-retai%"
 releaseNotes: support the write_mode field
 repository: https://github.com/oomol-flows/books-translator

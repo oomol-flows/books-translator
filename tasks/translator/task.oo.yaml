@@ -60,6 +60,8 @@ inputs_def:
           - Korean
     value: zh-Hans
   - handle: write_mode
+    description: 'How is the translation written into an EPUB file: Is it "append"
+      to the original text? Or does it "replace" the original text?'
     json_schema:
       enum:
         - append
@@ -68,8 +70,6 @@ inputs_def:
         labels:
           - Append
           - Replace
-    description: 'How is the translation written into an EPUB file: Is it "append"
-      to the original text? Or does it "replace" the original text?'
     value: append
   - handle: prompt
     description: Provide LLM with necessary information for translating books. For
@@ -116,8 +116,8 @@ inputs_def:
         title: Model
       ui:widget: llm::model
     value:
-      model: oomol-chat
-      temperature: 0
+      model: deepseek-chat
+      temperature: 0.5
       top_p: 0.5
       max_tokens: 4096
 outputs_def:
