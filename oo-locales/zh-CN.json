@@ -3,7 +3,7 @@
   "books-translator": "图书翻译",
   "books-translator1": "图书翻译",
   "use-llm-to-translate-epub-e-books-the-translated-book-will-retai": "使用大语言模型（LLM）翻译EPUB电子书。翻译后的书籍将保留原文，并在原文旁边显示译文。",
-  "playground": "操场",
+  "playground": "Playground",
   "translate-a-book-1": "翻译一本书 #1",
   "translate-a-book": "翻译一本书",
   "use-llm-to-translate-epub-ebooks-the-translated-book-will-retain": "使用 LLM 翻译 epub 电子书。翻译后的书籍将保留原文，并将译文与原文并排列出。",
