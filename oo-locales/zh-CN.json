@@ -15,5 +15,15 @@
   "the-entire-book-will-be-split-into-many-chunks-and-submitted-to": "整本书将被拆分成多个部分，并分批提交给 LLM。这个数字用于限制每个部分中的 token 数量。",
   "the-number-of-threads-opened-at-the-same-time-to-initiate-reques": "同时开启用于向 LLM 发起请求的线程数量，线程越多，分析速度越快。",
   "the-number-of-retries-after-an-llm-request-fails-is-limited-if-a": "在 LLM 请求失败后，重试的次数是有限的。如果某个请求超过了这个次数，将会报错并退出该请求。",
-  "how-long-in-seconds-after-a-failed-llm-request-starts-the-next-r": "在一次 LLM 请求失败后，下一次重试会在多少秒后开始"
+  "how-long-in-seconds-after-a-failed-llm-request-starts-the-next-r": "在一次 LLM 请求失败后，下一次重试会在多少秒后开始",
+  "comment:+comment-1751874375575:title": "主要领域",
+  "comment:+comment-1751874375575:content": "在大多数情况下，您只需配置这三个字段即可正常运行所有内容。\n- `source_file`：要翻译的原始 EPUB 文件\n- `translated_file`：保存翻译后 EPUB 文件的位置（如果留空，将保存在 `session_dir` 中）\n- `language`：翻译的目标语言",
+  "comment:+comment-1751874833250:title": "自定义提示",
+  "comment:+comment-1751874833250:content": "“prompt” 字段可以填写提示，用于为 LLM 提供翻译书籍所需的信息。例如，你可以输入标准化的词汇表和角色名称。只需用自然语言描述并告知 LLM 即可。",
+  "comment:+comment-1751874949570:title": "输出字段",
+  "comment:+comment-1751874949570:content": "`translated_file` 翻译文件的保存路径。",
+  "comment:+comment-1751875005817:title": "额外字段",
+  "comment:+comment-1751875005817:content": "如果你不希望修改以下字段，只需保留它们的原始值。\n\n- `max_chunk_tokens`：在分段翻译时，此参数限制每个分段的最大 token 数。由于大语言模型（LLM）的特性，不可能一次性将整本书输入到大语言模型中进行翻译。因此，书籍会被分割成多个片段并提交给 LLM。本参数用于限制每个片段的最大长度（以 token 计）。\n- `threads`：并发翻译请求的数量。如果你觉得翻译速度太慢，可以增加此值。但建议不要超过 16 个并发线程，否则可能会触发 LLM 提供商的限流。\n- `retry_times`：同一片段连续失败的次数达到该值后，才会被判定为失败。\n- `retry_interval_seconds`：每次失败后，重试前需要等待的秒数。",
+  "comment:+comment-1751875472639:title": "中断 口译",
+  "comment:+comment-1751875472639:content": "在翻译同一本书时，如果你主动中断了过程，或者由于网络问题而被中断，你已经完成的进度不会丢失。点击“运行”继续后，你可以从上次中断的地方继续翻译。"
 }
