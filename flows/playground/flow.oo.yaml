@@ -1,14 +1,15 @@
 nodes:
   - node_id: translator#4
-    title: "Translate a book #1"
+    title: "%translate-a-book-1%"
     inputs_from:
       - handle: model
         value:
-          model: oomol-chat
-          temperature: 0.68
-          top_p: 0.7
-          max_tokens: 4096
+          model: deepseek-chat
+          temperature: 0.5
+          top_p: 1
+          max_tokens: 128000
       - handle: source_file
+        value: /oomol-driver/oomol-storage/epub/d3.epub
       - handle: translated_file
         value: null
       - handle: language
@@ -18,7 +19,7 @@ nodes:
       - handle: max_chunk_tokens
         value: 2048
       - handle: threads
-        value: 1
+        value: 4
       - handle: retry_times
         value: 5
       - handle: retry_interval_seconds
@@ -26,4 +27,4 @@ nodes:
       - handle: write_mode
         value: append
     task: self::translator
-title: Playground
+title: "%playground%"

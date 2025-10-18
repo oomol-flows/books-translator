@@ -8,7 +8,7 @@ scripts:
 dependencies:
   {}
 name: books-translator
-version: 0.1.15
+version: 0.2.0
 displayName: "%books-translator1%"
 description: "%use-llm-to-translate-epub-e-books-the-translated-book-will-retai%"
 releaseNotes: support the write_mode field

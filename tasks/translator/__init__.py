@@ -21,7 +21,7 @@ class Inputs(typing.TypedDict):
   retry_interval_seconds: float
   model: LLMModelOptions
 class Outputs(typing.TypedDict):
-  translated_file: str
+  translated_file: typing.NotRequired[str]
 #endregion
 
 def main(params: Inputs, context: Context) -> Outputs:
