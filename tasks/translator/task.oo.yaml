@@ -4,7 +4,7 @@ executor:
     entry: __init__.py
 inputs_def:
   - handle: source_file
-    description: The original EPUB file to be translated
+    description: "%the-original-epub-file-to-be-translated%"
     json_schema:
       type: string
       ui:widget: file
@@ -15,8 +15,7 @@ inputs_def:
             extensions:
               - .epub
   - handle: translated_file
-    description: The saved path of the translated EPUB file. If not filled in,
-      specify an path.
+    description: "%the-saved-path-of-the-translated-epub-file-if-not-filled-in-spec%"
     json_schema:
       type: string
       ui:widget: save
@@ -31,7 +30,7 @@ inputs_def:
   - group: Translate
     collapsed: false
   - handle: language
-    description: Translation target language
+    description: "%translation-target-language%"
     json_schema:
       enum:
         - zh-Hans
@@ -60,8 +59,7 @@ inputs_def:
           - Korean
     value: zh-Hans
   - handle: write_mode
-    description: 'How is the translation written into an EPUB file: Is it "append"
-      to the original text? Or does it "replace" the original text?'
+    description: '%how-is-the-translation-written-into-an-epub-file-is-it-append-to%'
     json_schema:
       enum:
         - append
@@ -72,9 +70,7 @@ inputs_def:
           - Replace
     value: append
   - handle: prompt
-    description: Provide LLM with necessary information for translating books. For
-      example, you can fill in the glossary and character name specifications.
-      Just tell LLM with natural language description.
+    description: "%provide-llm-with-necessary-information-for-translating-books-for%"
     json_schema:
       type: string
       ui:widget: text
@@ -83,29 +79,24 @@ inputs_def:
   - group: LLM
     collapsed: true
   - handle: max_chunk_tokens
-    description: The entire book will be split into many chunks and submitted to LLM
-      in batches. this number is used to limit the number of tokens in each
-      chunk.
+    description: "%the-entire-book-will-be-split-into-many-chunks-and-submitted-to%"
     json_schema:
       type: integer
     value: 2048
   - handle: threads
-    description: The number of threads opened at the same time to initiate requests
-      to LLM, the more threads, the faster the analysis speed.
+    description: "%the-number-of-threads-opened-at-the-same-time-to-initiate-reques%"
     json_schema:
       type: integer
       minimum: 1
     value: 4
   - handle: retry_times
-    description: The number of retries after an LLM request fails is limited. If a
-      request exceeds this number, an error will be reported and the request
-      will be exited.
+    description: "%the-number-of-retries-after-an-llm-request-fails-is-limited-if-a%"
     json_schema:
       type: integer
       minimum: 1
     value: 5
   - handle: retry_interval_seconds
-    description: How long (in seconds) after a failed LLM request starts the next retry
+    description: "%how-long-in-seconds-after-a-failed-llm-request-starts-the-next-r%"
     json_schema:
       type: number
       minimum: 0
@@ -131,7 +122,5 @@ outputs_def:
           - name: EPUB
             extensions:
               - .epub
-title: Translate a book
-description: Use LLM to translate epub ebooks. The translated book will retain
-  the original text and list the translation side by side with the original
-  text.
+title: "%translate-a-book%"
+description: "%use-llm-to-translate-epub-ebooks-the-translated-book-will-retain%"
