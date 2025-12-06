@@ -8,7 +8,7 @@ scripts:
 dependencies:
   {}
 name: books_translator
-version: 0.2.0
+version: 0.2.1
 displayName: "%display-name3%"
 description: "%description3%"
 releaseNotes: support the write_mode field
