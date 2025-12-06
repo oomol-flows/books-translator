@@ -102,6 +102,7 @@ inputs_def:
       minimum: 0
     value: 6.5
   - handle: model
+    description: "%llm-model-configuration%"
     json_schema:
       ui:options:
         title: Model
@@ -113,7 +114,7 @@ inputs_def:
       max_tokens: 4096
 outputs_def:
   - handle: translated_file
-    description: Translated EPUB file path.
+    description: "%translated-epub-file-path%"
     json_schema:
       type: string
       ui:widget: save

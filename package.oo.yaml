@@ -7,9 +7,9 @@ scripts:
     poetry install --no-root
 dependencies:
   {}
-name: books-translator
+name: books_translator
 version: 0.2.0
-displayName: "%books-translator1%"
-description: "%use-llm-to-translate-epub-e-books-the-translated-book-will-retai%"
+displayName: "%display-name3%"
+description: "%description3%"
 releaseNotes: support the write_mode field
 repository: https://github.com/oomol-flows/books-translator
