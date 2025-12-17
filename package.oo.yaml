@@ -7,7 +7,7 @@ scripts:
     poetry install --no-root
 dependencies:
   {}
-name: books_translator
+name: books-translator
 version: 0.2.1
 displayName: "%display-name3%"
 description: "%description3%"
