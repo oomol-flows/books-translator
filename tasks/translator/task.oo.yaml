@@ -14,21 +14,6 @@ inputs_def:
           - name: EPUB
             extensions:
               - .epub
-  - handle: translated_file
-    description: "%the-saved-path-of-the-translated-epub-file-if-not-filled-in-spec%"
-    json_schema:
-      type: string
-      ui:widget: save
-      ui:options:
-        excludeAll: true
-        filters:
-          - name: EPUE
-            extensions:
-              - .epub
-    value:
-    nullable: true
-  - group: Translate
-    collapsed: false
   - handle: language
     description: "%translation-target-language%"
     json_schema:
@@ -59,7 +44,7 @@ inputs_def:
           - Korean
     value: zh-Hans
   - handle: write_mode
-    description: '%how-is-the-translation-written-into-an-epub-file-is-it-append-to%'
+    description: "%how-is-the-translation-written-into-an-epub-file-is-it-append-to%"
     json_schema:
       enum:
         - append
@@ -69,6 +54,21 @@ inputs_def:
           - Append
           - Replace
     value: append
+  - group: Translate
+    collapsed: true
+  - handle: translated_file
+    description: '%the-saved-path-of-the-translated-epub-file-if-not-filled-in-spec%'
+    json_schema:
+      type: string
+      ui:widget: save
+      ui:options:
+        excludeAll: true
+        filters:
+          - name: EPUE
+            extensions:
+              - epub
+    value:
+    nullable: true
   - handle: prompt
     description: "%provide-llm-with-necessary-information-for-translating-books-for%"
     json_schema:
@@ -110,8 +110,8 @@ inputs_def:
     value:
       model: deepseek-chat
       temperature: 0.5
-      top_p: 0.5
-      max_tokens: 4096
+      top_p: 1
+      max_tokens: 8100
 outputs_def:
   - handle: translated_file
     description: "%translated-epub-file-path%"

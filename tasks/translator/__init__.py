@@ -11,9 +11,9 @@ import typing
 from oocana import LLMModelOptions
 class Inputs(typing.TypedDict):
   source_file: str
-  translated_file: str | None
   language: typing.Literal["zh-Hans", "zh-Hant", "en", "fr", "de", "es", "ru", "it", "pt", "ja", "ko"]
   write_mode: typing.Literal["append", "replace"]
+  translated_file: str | None
   prompt: str | None
   max_chunk_tokens: int
   threads: int
